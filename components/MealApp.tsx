@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { applyCorrection, type EatenPercent, type PortionMultiplier } from "../lib/client/correction";
-import { addHistory, deleteHistory, loadHistory, type HistoryEntry } from "../lib/client/history";
+import { addHistory, deleteHistory, loadHistory, updateMemo, type HistoryEntry } from "../lib/client/history";
 import { consumeQuota, getQuota, FREE_MONTHLY_LIMIT } from "../lib/client/quota";
 import { ImageTooLargeError, prepareUpload } from "../lib/client/resize";
-import { PROMPT_VERSION } from "../lib/meal/prompt";
+import { analyzePhoto, analyzeText } from "../lib/client/api";
+import { ManualEntry } from "./ManualEntry";
+import { PartyMode } from "./PartyMode";
 import type { MealAnalysis } from "../lib/meal/schema";
 import { HistoryView } from "./HistoryView";
 import { HomeView } from "./HomeView";
@@ -17,6 +19,15 @@ import { ResultView } from "./ResultView";
 
 type Tab = "home" | "analyze" | "history" | "settings";
 type Status = "idle" | "preparing" | "ready" | "analyzing" | "done" | "error";
+type Method = "photo" | "text" | "manual" | "party";
+
+const METHODS: { key: Method; label: string }[] = [
+  { key: "photo", label: "写真" },
+  { key: "text", label: "テキスト" },
+  { key: "manual", label: "手入力" },
+  { key: "party", label: "飲み会" },
+];
+const TEXT_MAX = 300;
 
 interface Upload {
   blob: Blob;
@@ -31,7 +42,11 @@ export function MealApp() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [upload, setUpload] = useState<Upload | null>(null);
+  const [method, setMethod] = useState<Method>("photo");
+  const [mealText, setMealText] = useState("");
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
+  /** 表示中の解析結果がどの入力方法・どのプロンプトから来たか（記録に残す） */
+  const [analysisFrom, setAnalysisFrom] = useState<{ source: "photo" | "text"; promptVersion: string }>({ source: "photo", promptVersion: "" });
   const [isMock, setIsMock] = useState(false);
   const [multipliers, setMultipliers] = useState<PortionMultiplier[]>([]);
   const [eatenPercent, setEatenPercent] = useState<EatenPercent>(100);
@@ -89,43 +104,37 @@ export function MealApp() {
     }
   }
 
-  async function analyze() {
-    if (!upload) return;
+  /** 写真・テキスト共通：解析を投げて結果を画面に出す。食事の結果が返った回だけ回数を消費する */
+  async function runAnalysis(source: "photo" | "text", call: () => ReturnType<typeof analyzeText>) {
     const q = getQuota();
     setQuota(q);
     if (q.exhausted) return; // 上限到達時は解析しない
 
     setStatus("analyzing");
     setError("");
-    try {
-      const fd = new FormData();
-      fd.append("image", upload.blob, upload.fileName);
-      const res = await fetch("/api/meal-analysis", { method: "POST", body: fd });
-      const body = (await res.json().catch(() => null)) as (MealAnalysis & { message?: string }) | null;
-      if (!res.ok || !body) {
-        const fallback =
-          res.status === 413
-            ? "画像が大きすぎます。別の写真でお試しください。"
-            : "解析できませんでした。少し時間をおいてもう一度お試しください。";
-        throw new Error(body?.message || fallback);
-      }
-      setAnalysis(body);
-      setIsMock(res.headers.get("x-meal-mock") === "1");
-      setMultipliers(body.items.map(() => 1));
-      // 結果が返ってきた回だけ数える。食事が写っていない結果（items が空）は数えない
-      // （撮り直しで無料枠が減る理不尽さを避ける。API 費用は 1 回 0.17 円程度）
-      setQuota(body.items.length > 0 ? consumeQuota() : getQuota());
-      setStatus("done");
-    } catch (err) {
+    const res = await call();
+    if (!res.ok) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "解析できませんでした。");
+      setError(res.message);
+      return;
     }
+    setAnalysis(res.result);
+    setAnalysisFrom({ source, promptVersion: res.promptVersion });
+    setIsMock(res.mock);
+    setMultipliers(res.result.items.map(() => 1));
+    // 食事と判断できない結果（items が空）は数えない（撮り直し・書き直しで無料枠が減る理不尽さを避ける）
+    setQuota(res.result.items.length > 0 ? consumeQuota() : getQuota());
+    setStatus("done");
   }
+
+  const analyze = () => upload && runAnalysis("photo", () => analyzePhoto(upload.blob, upload.fileName));
+  const analyzeMealText = () => mealText.trim() && runAnalysis("text", () => analyzeText(mealText.trim()));
 
   function record() {
     if (!analysis || !corrected || recorded) return;
     const { ok } = addHistory({
-      promptVersion: PROMPT_VERSION,
+      source: analysisFrom.source,
+      promptVersion: analysisFrom.promptVersion || undefined,
       mock: isMock,
       confidence: analysis.confidence,
       note: analysis.note,
@@ -140,6 +149,7 @@ export function MealApp() {
       return;
     }
     setRecorded(true);
+    if (analysisFrom.source === "text") setMealText("");
     setHistory(loadHistory());
   }
 
@@ -147,10 +157,20 @@ export function MealApp() {
 
   return (
     <div className="app">
-      <header className="header">
-        <h1 className="logo">ごはんスキャン</h1>
-        <p className="tagline">写真から品目・カロリー・PFCを推定</p>
-      </header>
+      {tab === "home" ? (
+        <header className="header header-home" data-testid="header-home">
+          <div className="header-text">
+            <h1 className="logo">ごはんスキャン</h1>
+            <p className="tagline">写真から品目・カロリー・PFCを推定</p>
+            <p className="greeting">毎日のごはん記録を、そっと応援します</p>
+          </div>
+        </header>
+      ) : (
+        <header className="header">
+          <h1 className="logo">ごはんスキャン</h1>
+          <p className="tagline">写真から品目・カロリー・PFCを推定</p>
+        </header>
+      )}
 
       {isMock && analysis && (
         <div className="mock-banner" data-testid="mock-banner">
@@ -193,7 +213,15 @@ export function MealApp() {
             }}
           />
         ) : tab === "history" ? (
-          <HistoryView history={history} onDelete={(id) => setHistory(deleteHistory(id))} />
+          <HistoryView
+            history={history}
+            onDelete={(id) => setHistory(deleteHistory(id))}
+            onMemo={(id, memo) => {
+              const r = updateMemo(id, memo);
+              if (r.ok) setHistory(r.list);
+              return r.ok;
+            }}
+          />
         ) : (
           <>
             {!analysis && (
@@ -202,11 +230,32 @@ export function MealApp() {
                   今月の無料解析：残り <strong>{quota.remaining}</strong> / {quota.limit} 回
                 </div>
 
-                {quota.exhausted ? (
+                <div className="seg seg-4 method-seg" role="tablist" aria-label="入力方法">
+                  {METHODS.map((m) => (
+                    <button
+                      key={m.key}
+                      role="tab"
+                      aria-selected={method === m.key}
+                      className={`seg-btn ${method === m.key ? "on" : ""}`}
+                      onClick={() => {
+                        setMethod(m.key);
+                        setError("");
+                      }}
+                      disabled={busy}
+                      data-testid={`method-${m.key}`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+
+                {(method === "photo" || method === "text") && quota.exhausted && (
                   <p className="quota-over" data-testid="quota-over">
                     {QUOTA_MESSAGE}
                   </p>
-                ) : (
+                )}
+
+                {method === "photo" && !quota.exhausted && (
                   <>
                     <div className="picker">
                       <button className="btn btn-primary" onClick={() => cameraRef.current?.click()} disabled={busy}>
@@ -218,26 +267,57 @@ export function MealApp() {
                     </div>
                     <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={onFile} />
                     <input ref={libraryRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden onChange={onFile} data-testid="file-input" />
+
+                    {status === "preparing" && <p className="muted">写真を読み込んでいます…</p>}
+
+                    {upload && (
+                      <div className="preview">
+                        {upload.previewUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- ローカルの blob URL を表示するだけ
+                          <img src={upload.previewUrl} alt="選択した食事の写真" />
+                        ) : (
+                          <div className="preview-placeholder">プレビューを表示できない形式です（{upload.fileName}）</div>
+                        )}
+                      </div>
+                    )}
+
+                    {upload && (
+                      <button className="btn btn-primary btn-block" onClick={analyze} disabled={busy} data-testid="analyze">
+                        {status === "analyzing" ? "解析しています…" : "この写真を解析する"}
+                      </button>
+                    )}
                   </>
                 )}
 
-                {status === "preparing" && <p className="muted">写真を読み込んでいます…</p>}
-
-                {upload && (
-                  <div className="preview">
-                    {upload.previewUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- ローカルの blob URL を表示するだけ
-                      <img src={upload.previewUrl} alt="選択した食事の写真" />
-                    ) : (
-                      <div className="preview-placeholder">プレビューを表示できない形式です（{upload.fileName}）</div>
-                    )}
+                {method === "text" && !quota.exhausted && (
+                  <div data-testid="text-mode">
+                    <textarea
+                      className="text-area"
+                      rows={3}
+                      maxLength={TEXT_MAX}
+                      placeholder="例：親子丼と味噌汁／カレーライス大盛り／サラダとゆで卵2個"
+                      value={mealText}
+                      onChange={(e) => setMealText(e.target.value)}
+                      aria-label="食べたもの"
+                      data-testid="meal-text"
+                    />
+                    <p className="muted small">写真がないときに、食べたものを文章で入れて推定します（解析を1回使います）。量の指定（大盛り・○個など）も書けます。</p>
+                    <button className="btn btn-primary btn-block" onClick={analyzeMealText} disabled={busy || !mealText.trim()} data-testid="analyze-text">
+                      {status === "analyzing" ? "推定しています…" : "推定する"}
+                    </button>
                   </div>
                 )}
 
-                {upload && !quota.exhausted && (
-                  <button className="btn btn-primary btn-block" onClick={analyze} disabled={busy} data-testid="analyze">
-                    {status === "analyzing" ? "解析しています…" : "この写真を解析する"}
-                  </button>
+                {method === "manual" && <ManualEntry onRecorded={() => setHistory(loadHistory())} />}
+
+                {method === "party" && (
+                  <PartyMode
+                    quotaExhausted={quota.exhausted}
+                    onRecorded={() => {
+                      setHistory(loadHistory());
+                      setQuota(getQuota());
+                    }}
+                  />
                 )}
               </section>
             )}
@@ -258,6 +338,7 @@ export function MealApp() {
                 onRecord={record}
                 recorded={recorded}
                 onReset={reset}
+                source={analysisFrom.source}
               />
             )}
           </>

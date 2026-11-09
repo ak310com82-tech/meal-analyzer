@@ -1,6 +1,7 @@
 "use client";
 
-import { groupByDay, type HistoryEntry } from "../lib/client/history";
+import { useEffect, useState } from "react";
+import { groupByDay, MEMO_MAX, SOURCE_LABEL, type HistoryEntry } from "../lib/client/history";
 
 const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -15,7 +16,18 @@ function timeLabel(iso: string): string {
   return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export function HistoryView({ history, onDelete }: { history: HistoryEntry[]; onDelete: (id: string) => void }) {
+const len = (s: string) => Array.from(s).length;
+
+interface Props {
+  history: HistoryEntry[];
+  onDelete: (id: string) => void;
+  /** メモを保存。成功したら true */
+  onMemo: (id: string, memo: string) => boolean;
+}
+
+export function HistoryView({ history, onDelete, onMemo }: Props) {
+  const [openId, setOpenId] = useState<string | null>(null);
+
   if (history.length === 0) {
     return (
       <section className="card">
@@ -37,39 +49,120 @@ export function HistoryView({ history, onDelete }: { history: HistoryEntry[]; on
             P {g.totals.protein_g}g ・ F {g.totals.fat_g}g ・ C {g.totals.carbs_g}g
           </div>
           <ul className="entries">
-            {g.entries.map((e) => (
-              <li className="entry" key={e.id} data-testid="entry">
-                <div className="entry-main">
-                  <div className="entry-time">
-                    {timeLabel(e.createdAt)}
-                    {e.eatenPercent != null && e.eatenPercent !== 100 && (
-                      <span className="tag" data-testid="eaten-tag">
-                        食べた割合 {e.eatenPercent}%
+            {g.entries.map((e) => {
+              const open = openId === e.id;
+              const sourceLabel = SOURCE_LABEL[e.source ?? "photo"];
+              return (
+                <li className={`entry-wrap ${open ? "open" : ""}`} key={e.id} data-testid="entry">
+                  <div className="entry">
+                    <button
+                      className="entry-main entry-toggle"
+                      aria-expanded={open}
+                      onClick={() => setOpenId(open ? null : e.id)}
+                      data-testid="entry-open"
+                    >
+                      <span className="entry-time">
+                        {timeLabel(e.createdAt)}
+                        {sourceLabel && (
+                          <span className="tag tag-source" data-testid="source-tag">
+                            {sourceLabel}
+                          </span>
+                        )}
+                        {e.eatenPercent != null && e.eatenPercent !== 100 && (
+                          <span className="tag" data-testid="eaten-tag">
+                            食べた割合 {e.eatenPercent}%
+                          </span>
+                        )}
+                        {e.halfMode && <span className="tag">ハーフ</span>}
+                        {e.isShared && <span className="tag">全量</span>}
+                        {e.mock && <span className="tag tag-mock">MOCK</span>}
                       </span>
-                    )}
-                    {e.halfMode && <span className="tag">ハーフ</span>}
-                    {e.isShared && <span className="tag">全量</span>}
-                    {e.mock && <span className="tag tag-mock">MOCK</span>}
+                      <span className="entry-items">{e.items.map((i) => i.name).join("、")}</span>
+                      {e.memo && (
+                        <span className="entry-memo" data-testid="entry-memo">
+                          {e.memo}
+                        </span>
+                      )}
+                    </button>
+                    <div className="entry-kcal">{e.totals.kcal} kcal</div>
+                    <button
+                      className="icon-btn"
+                      aria-label="この記録を削除"
+                      data-testid="delete"
+                      onClick={() => {
+                        if (window.confirm("この記録を削除しますか？")) onDelete(e.id);
+                      }}
+                    >
+                      ×
+                    </button>
                   </div>
-                  <div className="entry-items">{e.items.map((i) => i.name).join("、")}</div>
-                </div>
-                <div className="entry-kcal">{e.totals.kcal} kcal</div>
-                <button
-                  className="icon-btn"
-                  aria-label="この記録を削除"
-                  data-testid="delete"
-                  onClick={() => {
-                    if (window.confirm("この記録を削除しますか？")) onDelete(e.id);
-                  }}
-                >
-                  ×
-                </button>
-              </li>
-            ))}
+                  {open && <EntryDetail entry={e} onSave={(memo) => onMemo(e.id, memo)} />}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))}
-      <p className="muted small">※ 写真は保存していません（数値と品目名のみ、この端末内に保存）。</p>
+      <p className="muted small">※ 写真は保存していません（数値と品目名のみ、この端末内に保存）。記録をタップすると内訳とメモが開きます。</p>
+    </div>
+  );
+}
+
+function EntryDetail({ entry, onSave }: { entry: HistoryEntry; onSave: (memo: string) => boolean }) {
+  const [memo, setMemo] = useState(entry.memo ?? "");
+  const [state, setState] = useState<"idle" | "saved" | "error">("idle");
+  useEffect(() => setMemo(entry.memo ?? ""), [entry.memo]);
+  const over = len(memo) > MEMO_MAX;
+  const dirty = memo.trim() !== (entry.memo ?? "");
+
+  return (
+    <div className="entry-detail" data-testid="entry-detail">
+      <ul className="detail-items">
+        {entry.items.map((it, i) => (
+          <li key={i}>
+            <span className="detail-name">
+              {it.name}
+              {it.amount && <span className="detail-amount">{it.amount}</span>}
+            </span>
+            <span className="detail-kcal">{it.kcal} kcal</span>
+          </li>
+        ))}
+      </ul>
+      <div className="detail-pfc">
+        P {entry.totals.protein_g}g ・ F {entry.totals.fat_g}g ・ C {entry.totals.carbs_g}g
+      </div>
+      {entry.note && <p className="note">{entry.note}</p>}
+
+      <label className="field">
+        <span className="field-label">メモ（自分用）</span>
+        <textarea
+          className="text-area"
+          rows={3}
+          value={memo}
+          placeholder="例：会社の近くの定食屋。ごはん少なめで頼んだ"
+          onChange={(ev) => {
+            setMemo(ev.target.value);
+            setState("idle");
+          }}
+          data-testid="memo-input"
+        />
+      </label>
+      <div className="memo-foot">
+        <span className={`memo-count ${over ? "over" : ""}`} data-testid="memo-count">
+          {len(memo)} / {MEMO_MAX}
+        </span>
+        <button
+          className="btn btn-primary memo-save"
+          disabled={over || !dirty}
+          onClick={() => setState(onSave(memo) ? "saved" : "error")}
+          data-testid="memo-save"
+        >
+          メモを保存
+        </button>
+      </div>
+      {state === "saved" && !dirty && <p className="ok-msg small">保存しました</p>}
+      {state === "error" && <p className="error small">保存できませんでした（ブラウザの保存領域が使えない設定かもしれません）。</p>}
+      {over && <p className="error small">{MEMO_MAX}文字以内にしてください。</p>}
     </div>
   );
 }

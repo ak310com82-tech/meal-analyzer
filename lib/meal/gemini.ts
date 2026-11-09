@@ -37,14 +37,23 @@ interface RawResponse {
   };
 }
 
-export async function callGemini(apiKey: string, prompt: string, jpeg: Buffer, timeoutMs = 30_000): Promise<GeminiCallResult> {
+export type GeminiPart = { text: string } | { inline_data: { mime_type: string; data: string } };
+
+/** 写真版：プロンプト＋画像 */
+export const photoParts = (prompt: string, jpeg: Buffer): GeminiPart[] => [
+  { text: prompt },
+  { inline_data: { mime_type: "image/jpeg", data: jpeg.toString("base64") } },
+];
+
+/** テキスト版：プロンプト＋ユーザーの文章（別パートにして、指示と入力を混ぜない） */
+export const textParts = (prompt: string, label: string, userText: string): GeminiPart[] => [
+  { text: prompt },
+  { text: `${label}\n${userText}` },
+];
+
+export async function callGemini(apiKey: string, parts: GeminiPart[], timeoutMs = 30_000): Promise<GeminiCallResult> {
   const body = {
-    contents: [
-      {
-        role: "user",
-        parts: [{ text: prompt }, { inline_data: { mime_type: "image/jpeg", data: jpeg.toString("base64") } }],
-      },
-    ],
+    contents: [{ role: "user", parts }],
     generationConfig: {
       temperature: 0,
       responseMimeType: "application/json",

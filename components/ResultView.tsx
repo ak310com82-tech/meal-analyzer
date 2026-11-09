@@ -12,19 +12,24 @@ interface Props {
   onRecord: () => void;
   recorded: boolean;
   onReset: () => void;
+  /** 結果の元になった入力方法（文言の出し分けに使う） */
+  source?: "photo" | "text";
 }
 
-export function ResultView({ analysis, corrected, multipliers, onMultiplier, onEatenPercent, onRecord, recorded, onReset }: Props) {
+export function ResultView({ analysis, corrected, multipliers, onMultiplier, onEatenPercent, onRecord, recorded, onReset, source = "photo" }: Props) {
+  const isText = source === "text";
   if (analysis.items.length === 0) {
     return (
       <section className="card" data-testid="result-nofood">
         <h2 className="card-title">食事が見つかりませんでした</h2>
         <p className="muted">
-          写真から料理を読み取れませんでした。料理全体が写るように、明るい場所で撮り直してみてください。
+          {isText
+            ? "入力された文章から食事の内容を読み取れませんでした。料理名や量を書き直してみてください（解析回数は減っていません）。"
+            : "写真から料理を読み取れませんでした。料理全体が写るように、明るい場所で撮り直してみてください（解析回数は減っていません）。"}
         </p>
         {analysis.note && <p className="note">{analysis.note}</p>}
         <button className="btn btn-secondary" onClick={onReset}>
-          別の写真を選ぶ
+          {isText ? "入力し直す" : "別の写真を選ぶ"}
         </button>
       </section>
     );
@@ -50,7 +55,7 @@ export function ResultView({ analysis, corrected, multipliers, onMultiplier, onE
 
       {analysis.confidence === "low" && (
         <p className="soft-warn" data-testid="low-confidence">
-          写真から読み取りにくいところがあり、推定の確度が低めです。量の補正で調整してみてください。
+          {isText ? "文章から読み取りにくいところがあり" : "写真から読み取りにくいところがあり"}、推定の確度が低めです。量の補正で調整してみてください。
         </p>
       )}
       {analysis.note && <p className="note">{analysis.note}</p>}
@@ -97,7 +102,7 @@ export function ResultView({ analysis, corrected, multipliers, onMultiplier, onE
         </button>
       ) : (
         <button className="text-btn" onClick={onReset} data-testid="discard">
-          記録せずに別の写真を選ぶ
+          {isText ? "記録せずに入力し直す" : "記録せずに別の写真を選ぶ"}
         </button>
       )}
     </section>

@@ -24,6 +24,23 @@ Vercel：Project Settings → Environment Variables に `GEMINI_API_KEY` を登�
 | 画像前処理 | 向き補正 → 長辺 768px → JPEG 品質 80（sharp） | lib/meal/preprocess.ts |
 | プロンプト | v3（全文固定。鍋・大皿は全量＋is_shared） | lib/meal/prompt.ts |
 
+## 見た目（第4弾・第7弾）
+- 背景は白 `#FFFFFF`（第7弾で生成りから変更）。朱赤・抹茶・薄墨、Kaisei Decol／Zen Kaku Gothic New、影なし・罫線区切り・小さい角丸は第4弾のまま
+- ホーム最上部に先生のイラスト（`public/doctor.png`、幅104px、枠・影なし）。**実在の医師の監修ではないため「医師監修」等の表記は入れない**
+
+## 入力方法（解析タブ）：写真／テキスト／手入力／飲み会
+| 方法 | API | 月の解析回数 | 量補正・食べた割合 | 履歴の表示 |
+|---|---|---|---|---|
+| 写真 | 写真モード（プロンプト v3） | 食事の結果が出たら1回 | あり | 表示なし |
+| テキスト | テキストモード（プロンプト t1、`TEXT_PROMPT_VERSION`） | 同上（食事と判断できなければ消費しない） | あり（写真と共通の結果画面） | テキスト |
+| 手入力 | 使わない | 消費しない | なし（入れた値をそのまま記録） | 手入力 |
+| 飲み会 | 食べたものがあればテキストモード | 食べたものを推定できたら1回／お酒だけなら消費しない | なし | 飲み会 |
+
+- **テキスト API**：`POST /api/meal-analysis` に `text`（300文字まで）を送るとテキストモード。返却スキーマ・エラー・usage ログ（`mode: "text"`, `promptVersion: "t1"`）は写真版と共通。レスポンスヘッダ `x-meal-prompt-version` で版が分かる
+- **飲み会**：ビール（中ジョッキ）150／ハイボール100／酎ハイ150／カクテル180 kcal/杯（目安・固定、0〜20杯）。お酒は kcal のみで PFC に入れない。食べたものを推定できなかったときは記録しない（欄を空にすればお酒だけ記録できる）。途中の杯数と食べたものは端末に一時保存し、タブ切替・再読み込みで消えない（記録すると消える）
+- **履歴メモ**：記録をタップすると内訳とメモ（200文字まで）が開く。すべての入力方法の記録で使え、API・回数とは無関係
+- 月の上限に達しても、手入力とお酒だけの飲み会記録は使える
+
 ## カロリー収支（ホーム・設定タブ）
 すべてブラウザ内（localStorage）で計算。サーバー・API の追加なし。
 - **基礎代謝**：Mifflin-St Jeor 式（男性 10×体重+6.25×身長−5×年齢+5／女性 …−161）。設定で手入力に切り替え可、「自動計算を使う」で戻せる
@@ -38,17 +55,20 @@ app/
   api/meal-analysis/route.ts  解析API（multipart の image を受けて JSON を返す）
   page.tsx / layout.tsx / globals.css
 components/
-  MealApp.tsx      画面本体（ホーム／解析／履歴／設定のタブ）
+  MealApp.tsx      画面本体（ホーム／解析／履歴／設定のタブ、解析タブの入力方法切替）
+  ManualEntry.tsx  手入力（品目を何行でも追加）
+  PartyMode.tsx    飲み会（お酒のカウンター＋食べたもの）
   HomeView.tsx     今日の収支・歩数・このままいくと
   SettingsView.tsx プロフィールと基礎代謝（自動／手入力）
   ResultView.tsx   結果表示と量補正（半分／普通／大盛り、ハーフサイズ切替）
-  HistoryView.tsx  日別履歴・日次合計・個別削除
+  HistoryView.tsx  日別履歴・日次合計・個別削除・入力方法の表示・詳細とメモ
   Disclaimer.tsx   免責文
 lib/meal/          解析エンジン（Next.js 非依存 → そだてるダイエット本体へこのフォルダごと移植可）
   prompt.ts / schema.ts（厳密パース）/ preprocess.ts / gemini.ts / mock.ts / analyze.ts（リトライ・ログ）
 lib/client/        ブラウザ側ロジック
   correction.ts（量補正の計算）/ history.ts / quota.ts（月5回）/ resize.ts（送信前縮小）/ storage.ts
   energy.ts（基礎代謝・歩数・収支・予測の計算）/ profile.ts / steps.ts
+  api.ts（解析 API 呼び出し：写真・テキスト共通）/ party.ts（お酒の杯数・途中経過の保存）
 ```
 
 ## API：`POST /api/meal-analysis`
@@ -74,3 +94,4 @@ lib/client/        ブラウザ側ロジック
 ## モック（GEMINI_API_KEY 未設定時）
 画面上部に「MOCK」バナー、履歴にも MOCK タグが出る。ファイル名で動作確認用のシナリオを切り替えられる：
 `nofood` を含む → 食事なし ／ `lowconf` → 確度 low ／ `shared` → 鍋（全量・is_shared）／ `broken` → JSON 崩れ（リトライ後 502）／ それ以外 → 定食
+テキストのモックは文章で切り替え：「カレー」→ カレーライス ／「親子丼」→ 親子丼（「味噌汁」もあれば追加）／「餃子」→ 焼き餃子 ／「天気」「こんにちは」「ありがとう」「nofood」→ 食事と判断できない ／「broken」→ JSON 崩れ ／ それ以外 → 汎用の定食

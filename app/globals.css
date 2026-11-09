@@ -1,10 +1,10 @@
 /* =========================================================
-   ごはんスキャン ― 「街の定食屋の記録ノート」
+   ごはんスキャン ― 「街の定食屋の記録ノート」（背景は白）
    色・線・角丸・書体はすべてここのトークンから使う
    ========================================================= */
 :root {
   /* 色 */
-  --paper: #FAF5EC;    /* 生成り（背景） */
+  --paper: #FFFFFF;    /* 背景：白（第7弾で生成りから変更） */
   --ink: #2B2620;      /* 墨 */
   --shu: #C2402A;      /* 朱赤：ボタン・見出しの差し色・選択中 */
   --matcha: #66713F;   /* 抹茶：良い方向の表示だけ */
@@ -28,8 +28,6 @@
 html, body { margin: 0; padding: 0; }
 body {
   background-color: var(--paper);
-  /* ごく薄い紙のざらつき（SVG ノイズ） */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.17  0 0 0 0 0.15  0 0 0 0 0.12  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 16px;
@@ -216,3 +214,74 @@ strong { font-weight: 700; }
 /* ---------- フッター ---------- */
 .footer { padding: 6px 18px 24px; color: var(--ink-soft); }
 .footer .disclaimer { margin-top: 0; }
+
+/* =========================================================
+   第6弾・第8弾：入力方法・テキスト・手入力・飲み会・履歴メモ
+   ========================================================= */
+.seg.seg-4 { grid-template-columns: repeat(4, 1fr); }
+.method-seg { margin: 0 0 16px; }
+.method-seg .seg-btn { min-height: 44px; font-size: 14px; }
+
+.text-input, .text-area {
+  width: 100%; font-family: var(--font-body); font-size: 16px; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--ink-soft); border-radius: var(--r-control);
+}
+.text-input { height: 46px; padding: 0 12px; flex: 1; min-width: 0; }
+.text-area { padding: 10px 12px; line-height: 1.6; resize: vertical; min-height: 84px; display: block; }
+.text-input:focus, .text-area:focus { outline: none; border-color: var(--shu); box-shadow: inset 0 -2px 0 var(--shu); }
+.text-input::placeholder, .text-area::placeholder { color: var(--ink-soft); opacity: 0.6; }
+
+.sub-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); }
+.sub-title:first-child { margin-top: 4px; }
+.text-btn-left { margin: 8px 0 0; padding-left: 0; color: var(--shu); }
+.sum-line { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: var(--line); border-bottom: var(--line); margin-top: 14px; }
+.sum-label { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+.sum-value { font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1.1; }
+
+/* 手入力 */
+.manual-rows { list-style: none; margin: 10px 0 0; padding: 0; border-top: 2px solid var(--ink); counter-reset: row; }
+.manual-row { padding: 10px 0 12px; border-bottom: var(--line); }
+.manual-main { display: flex; gap: 8px; align-items: center; }
+.num-input.num-kcal { flex: 0 0 96px; width: 96px; }
+.manual-pfc { display: flex; gap: 10px; margin-top: 6px; }
+.pfc-field { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-soft); font-weight: 700; flex: 1 1 0; min-width: 0; }
+.num-input.num-small { height: 36px; font-size: 15px; padding: 0 6px; width: 0; flex: 1 1 0; min-width: 0; }
+.unit-s { font-weight: 400; }
+
+/* 飲み会：お酒のカウンター */
+.drinks { list-style: none; margin: 0; padding: 0; }
+.drink { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-bottom: var(--line); }
+.drink-name { font-weight: 700; line-height: 1.3; }
+.drink-kcal { display: block; font-size: 11px; font-weight: 400; color: var(--ink-soft); }
+.counter { display: flex; align-items: center; border: 1px solid var(--ink-soft); border-radius: var(--r-control); flex: none; }
+.counter-btn { width: 44px; height: 44px; border: 0; background: transparent; color: var(--shu); font-size: 20px; font-weight: 700; cursor: pointer; }
+.counter-btn:disabled { color: var(--rule); cursor: default; }
+.counter-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+.counter-num { width: 40px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 22px; border-left: var(--line); border-right: var(--line); line-height: 44px; }
+
+/* 履歴：タップで開く詳細とメモ */
+.entry-wrap { border-bottom: var(--line); }
+.entry-wrap .entry { border-bottom: 0; }
+.entry-wrap.open { border-bottom: 2px solid var(--ink); }
+.entry-toggle { border: 0; background: transparent; padding: 0; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 1px; font: inherit; color: inherit; }
+.entry-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.entry-memo { font-size: 12px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+.tag-source { border-color: var(--ink-soft); color: var(--ink-soft); }
+.entry-detail { padding: 2px 0 14px 10px; border-left: 3px solid var(--shu); margin-bottom: 10px; }
+.detail-items { list-style: none; margin: 0; padding: 0; }
+.detail-items li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--rule); font-size: 14px; }
+.detail-amount { display: block; font-size: 11px; color: var(--ink-soft); }
+.detail-kcal { font-family: var(--font-display); font-weight: 700; white-space: nowrap; }
+.detail-pfc { font-size: 12px; color: var(--ink-soft); margin: 6px 0 0; }
+.memo-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: -6px; }
+.memo-count { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.memo-count.over { color: var(--shu); font-weight: 700; }
+.btn.memo-save { min-height: 40px; padding: 6px 16px; font-size: 14px; }
+
+/* =========================================================
+   第7弾：ホーム最上部の先生イラスト（枠・影なし、白地にそのまま）
+   ========================================================= */
+.header-home { display: flex; align-items: flex-end; gap: 12px; padding-top: 12px; }
+.header-home .header-text { flex: 1; min-width: 0; padding-bottom: 2px; }
+.header-doctor { width: 104px; height: auto; flex: none; display: block; margin-bottom: -10px; }
+.greeting { margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink); }

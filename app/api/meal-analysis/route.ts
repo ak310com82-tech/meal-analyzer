@@ -1,13 +1,15 @@
 /**
  * POST /api/meal-analysis
- *   入力：multipart/form-data、フィールド名 image（JPEG / PNG / WebP / HEIC）
+ *   入力：multipart/form-data
+ *     - 写真モード：フィールド image（JPEG / PNG / WebP / HEIC）
+ *     - テキストモード：フィールド text（食事内容の文章、300 文字まで）。image より優先しない（どちらか一方を送る）
  *   出力：解析結果 JSON（lib/meal/schema.ts の MealAnalysis そのまま）
  *         モック応答のときはレスポンスヘッダ x-meal-mock: 1
  *   エラー：{ error: string, message: string } と適切なステータス
  *
  * APIキーはサーバーの環境変数 GEMINI_API_KEY のみ。クライアントには一切返さない。
  */
-import { analyzeMealImage, AnalysisFailedError } from "../../../lib/meal/analyze";
+import { analyzeMealImage, analyzeMealText, AnalysisFailedError, MAX_TEXT_LENGTH, type AnalyzeOutput } from "../../../lib/meal/analyze";
 import { UpstreamError } from "../../../lib/meal/gemini";
 import { UnsupportedImageError } from "../../../lib/meal/preprocess";
 
@@ -30,6 +32,18 @@ export async function POST(req: Request): Promise<Response> {
   } catch {
     return err(400, "bad_request", "画像を受け取れませんでした。もう一度お試しください。");
   }
+  const apiKey = process.env.GEMINI_API_KEY?.trim() || undefined;
+
+  // ---- テキストモード ----
+  const textField = form.get("text");
+  if (typeof textField === "string") {
+    const text = textField.trim();
+    if (!text) return err(400, "no_text", "食べたものを入力してください。");
+    if ([...text].length > MAX_TEXT_LENGTH) return err(400, "text_too_long", `食べたものは${MAX_TEXT_LENGTH}文字以内で入力してください。`);
+    return respond(() => analyzeMealText(text, { apiKey }), { kind: "text" });
+  }
+
+  // ---- 写真モード ----
   const file = form.get("image");
   if (!(file instanceof Blob) || file.size === 0) {
     return err(400, "no_image", "画像が選択されていません。");
@@ -44,35 +58,42 @@ export async function POST(req: Request): Promise<Response> {
     return err(413, "too_large", "画像が大きすぎます（4MBまで）。もう一度選び直してください。");
   }
 
+  const buf = Buffer.from(await file.arrayBuffer());
+  return respond(() => analyzeMealImage(buf, { apiKey, fileName }), { kind: "photo", isHeic: isHeicByName || type.includes("hei"), fileName, type });
+}
+
+/** 解析を実行してレスポンスに変換する（写真・テキスト共通のエラー処理） */
+async function respond(
+  run: () => Promise<AnalyzeOutput>,
+  ctx: { kind: "photo"; isHeic: boolean; fileName: string; type: string } | { kind: "text" },
+): Promise<Response> {
   try {
-    const buf = Buffer.from(await file.arrayBuffer());
-    const out = await analyzeMealImage(buf, { apiKey: process.env.GEMINI_API_KEY?.trim() || undefined, fileName });
+    const out = await run();
     return Response.json(out.result, {
       status: 200,
-      headers: { "x-meal-mock": out.mock ? "1" : "0", "cache-control": "no-store" },
+      headers: { "x-meal-mock": out.mock ? "1" : "0", "x-meal-prompt-version": out.promptVersion, "cache-control": "no-store" },
     });
   } catch (e) {
-    if (e instanceof UnsupportedImageError) {
-      const heic = isHeicByName || type.includes("hei");
-      console.warn(JSON.stringify({ event: "meal_analysis_unsupported_image", fileName, type, detail: e.message }));
+    if (e instanceof UnsupportedImageError && ctx.kind === "photo") {
+      console.warn(JSON.stringify({ event: "meal_analysis_unsupported_image", fileName: ctx.fileName, type: ctx.type, detail: e.message }));
       return err(
         415,
         "unreadable_image",
-        heic
+        ctx.isHeic
           ? "HEIC形式の画像を読み込めませんでした。カメラの設定で「互換性優先（JPEG）」にするか、スクリーンショットでお試しください。"
           : "画像を読み込めませんでした。別の写真でお試しください。",
       );
     }
     if (e instanceof AnalysisFailedError) {
-      console.error(JSON.stringify({ event: "meal_analysis_parse_failed", detail: e.message }));
+      console.error(JSON.stringify({ event: "meal_analysis_parse_failed", mode: ctx.kind, detail: e.message }));
       return err(502, "parse_failed", "解析結果を読み取れませんでした。少し時間をおいてもう一度お試しください。");
     }
     if (e instanceof UpstreamError) {
-      console.error(JSON.stringify({ event: "meal_analysis_upstream_error", status: e.status, detail: e.message }));
+      console.error(JSON.stringify({ event: "meal_analysis_upstream_error", mode: ctx.kind, status: e.status, detail: e.message }));
       if (e.status === 429) return err(503, "busy", "混み合っています。少し時間をおいてもう一度お試しください。");
       return err(502, "upstream_error", "解析サービスに接続できませんでした。少し時間をおいてもう一度お試しください。");
     }
-    console.error(JSON.stringify({ event: "meal_analysis_unknown_error", detail: String(e) }));
+    console.error(JSON.stringify({ event: "meal_analysis_unknown_error", mode: ctx.kind, detail: String(e) }));
     return err(500, "internal_error", "予期しないエラーが起きました。もう一度お試しください。");
   }
 }

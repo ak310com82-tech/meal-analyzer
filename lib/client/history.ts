@@ -8,13 +8,32 @@ import { localDateKey, readJson, writeJson } from "./storage";
 
 const KEY = "meal-analyzer:history:v1";
 
+/** 記録の入力方法。古い記録（未設定）は写真 */
+export type EntrySource = "photo" | "text" | "manual" | "party";
+
+export const SOURCE_LABEL: Record<EntrySource, string | null> = {
+  photo: null, // 写真は表示なし
+  text: "テキスト",
+  manual: "手入力",
+  party: "飲み会",
+};
+
+/** メモの上限（文字数） */
+export const MEMO_MAX = 200;
+
 export interface HistoryEntry {
   id: string;
   createdAt: string; // ISO
-  promptVersion: string;
+  /** 入力方法（第6弾〜。未設定＝写真） */
+  source?: EntrySource;
+  /** 解析に使ったプロンプトの版（写真 v3／テキスト t1）。手入力・お酒だけの飲み会は無し */
+  promptVersion?: string;
   mock: boolean;
-  confidence: Confidence;
+  /** AI の推定の確度。手入力・お酒だけの飲み会は無し */
+  confidence?: Confidence;
   note: string;
+  /** 自分用メモ（200 文字まで。第8弾〜） */
+  memo?: string;
   /** 食べた割合（%）。第2弾〜。古い記録には無い（＝100%扱い） */
   eatenPercent?: EatenPercent;
   /** 旧「全体がハーフサイズ」トグル（廃止）。古い記録の表示用に残す */
@@ -52,6 +71,13 @@ export function addHistory(entry: Omit<HistoryEntry, "id" | "createdAt">, now = 
   const e: HistoryEntry = { ...entry, id: newId(), createdAt: now.toISOString() };
   const ok = writeJson(KEY, [e, ...loadHistory()]);
   return { ok, entry: e };
+}
+
+/** メモを保存（空なら削除）。上限を超えた分は切る */
+export function updateMemo(id: string, memo: string): { ok: boolean; list: HistoryEntry[] } {
+  const clean = Array.from(memo.trim()).slice(0, MEMO_MAX).join("");
+  const list = loadHistory().map((e) => (e.id === id ? { ...e, memo: clean || undefined } : e));
+  return { ok: writeJson(KEY, list), list };
 }
 
 export function deleteHistory(id: string): HistoryEntry[] {

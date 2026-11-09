@@ -70,3 +70,39 @@ export async function callMock(fileName: string): Promise<GeminiCallResult> {
     finishReason: "STOP",
   };
 }
+
+/**
+ * テキスト解析のダミー応答。文章の中身でシナリオを切り替える：
+ *   - 「カレー」→ カレーライス ／「親子丼」→ 親子丼（「味噌汁」もあれば追加）／「餃子」→ 餃子
+ *   - 「天気」「こんにちは」「ありがとう」「nofood」→ 食事と判断できない（items 空）
+ *   - 「broken」→ JSON 崩れ（リトライ → 502 の確認用）
+ *   - それ以外 → 汎用の定食
+ */
+export async function callMockText(text: string): Promise<GeminiCallResult> {
+  await new Promise((r) => setTimeout(r, 300));
+  const usage = { inputTokens: 650, outputTokens: 260, thoughtsTokens: 0, imageTokens: null };
+  const ok = (v: object): GeminiCallResult => ({ text: JSON.stringify(v), usage, finishReason: "STOP" });
+  const t = text.toLowerCase();
+
+  if (t.includes("broken")) return { text: '{"items": [', usage, finishReason: "MAX_TOKENS" };
+  if (/天気|こんにちは|ありがとう|nofood/.test(t)) {
+    return ok({ items: [], total_kcal: 0, half_total_kcal: 0, is_shared: false, confidence: "low", note: "（MOCK）食事の内容と判断できませんでした" });
+  }
+
+  const items: { name: string; amount: string; kcal: number; protein_g: number; fat_g: number; carbs_g: number }[] = [];
+  if (t.includes("カレー")) items.push({ name: "（MOCK）カレーライス", amount: "1皿 ごはん200g", kcal: 750, protein_g: 18, fat_g: 24, carbs_g: 110 });
+  if (t.includes("親子丼")) items.push({ name: "（MOCK）親子丼", amount: "丼1杯 ごはん250g", kcal: 680, protein_g: 28, fat_g: 16, carbs_g: 100 });
+  if (t.includes("餃子")) items.push({ name: "（MOCK）焼き餃子", amount: "3個 約75g", kcal: 120, protein_g: 4.5, fat_g: 6.6, carbs_g: 11 });
+  if (t.includes("味噌汁")) items.push({ name: "（MOCK）味噌汁", amount: "1杯 約180ml", kcal: 40, protein_g: 2.4, fat_g: 1.2, carbs_g: 4.8 });
+  if (!items.length) items.push({ name: "（MOCK）定食", amount: "1人前", kcal: 650, protein_g: 25, fat_g: 20, carbs_g: 85 });
+
+  const total = items.reduce((a, i) => a + i.kcal, 0);
+  return ok({
+    items,
+    total_kcal: total,
+    half_total_kcal: Math.round(total / 2),
+    is_shared: false,
+    confidence: "medium",
+    note: "（MOCK）テキストからの推定。通常1人前として計算",
+  });
+}
