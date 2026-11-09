@@ -8,10 +8,15 @@
  *   エラー：{ error: string, message: string } と適切なステータス
  *
  * APIキーはサーバーの環境変数 GEMINI_API_KEY のみ。クライアントには一切返さない。
+ *
+ * 不正対策（lib/server/guard.ts）：
+ *   - 呼び出し元チェック：Origin（なければ Referer）が自サイトでなければ 403
+ *   - IP ごとの回数制限：1 時間に 20 回まで（写真・テキスト合算）。超えたら 429
  */
 import { analyzeMealImage, analyzeMealText, AnalysisFailedError, MAX_TEXT_LENGTH, type AnalyzeOutput } from "../../../lib/meal/analyze";
 import { UpstreamError } from "../../../lib/meal/gemini";
 import { UnsupportedImageError } from "../../../lib/meal/preprocess";
+import { checkOrigin, clientIp, takeRateLimit } from "../../../lib/server/guard";
 
 export const runtime = "nodejs"; // sharp を使うため
 export const dynamic = "force-dynamic";
@@ -26,6 +31,24 @@ function err(status: number, error: string, message: string) {
 }
 
 export async function POST(req: Request): Promise<Response> {
+  // ---- 1. 呼び出し元チェック（ブラウザの fetch は Origin を自動で送る）----
+  const origin = checkOrigin(req);
+  if (!origin.ok) {
+    console.warn(JSON.stringify({ event: "meal_analysis_forbidden", reason: origin.reason }));
+    return err(403, "forbidden", "このアプリの画面から操作してください。");
+  }
+
+  // ---- 2. IP ごとの回数制限（写真・テキスト合算）----
+  const ip = clientIp(req);
+  const limit = takeRateLimit(ip);
+  if (!limit.ok) {
+    console.warn(JSON.stringify({ event: "meal_analysis_rate_limited", retryAfterSec: limit.retryAfterSec }));
+    return Response.json(
+      { error: "rate_limited", message: "短い時間に解析が続いたため、少し止めています。少し時間を空けてからお試しください。" },
+      { status: 429, headers: { "retry-after": String(limit.retryAfterSec), "cache-control": "no-store" } },
+    );
+  }
+
   let form: FormData;
   try {
     form = await req.formData();

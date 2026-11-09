@@ -84,6 +84,14 @@ lib/client/        ブラウザ側ロジック
   | 502 / 503 | upstream_error / busy | Gemini API のエラー / 429 |
 - コスト監視：1 呼び出しごとに `{"event":"meal_analysis_call", model, promptVersion, attempt, ok, latencyMs, usage:{inputTokens, outputTokens, thoughtsTokens, imageTokens}, image:{width,height,bytes}}` を 1 行 JSON でサーバーログに出力（Vercel の Logs で `meal_analysis_call` 検索）
 
+## 不正対策（第9弾・公開前の最小限）
+`POST /api/meal-analysis` の先頭で2つチェックする（`lib/server/guard.ts`）。
+- **呼び出し元チェック**：Origin（なければ Referer）のホストが自サイトでなければ **403**。許可するのは本番 `meal-analyzer-kohl.vercel.app`、このプロジェクトのプレビュー `meal-analyzer-*.vercel.app`、Vercel が自動設定する `VERCEL_URL` などのデプロイ先、開発時（`NODE_ENV` が production 以外）の localhost
+  - 独自ドメインを付けるときは `lib/server/guard.ts` の `PRODUCTION_HOST` を書き換えること（`VERCEL_PROJECT_PRODUCTION_URL` で通る場合もある）
+- **IP ごとの回数制限**：同じ IP（`x-forwarded-for` の先頭）から 1 時間に 20 回まで、写真・テキスト合算。超えたら **429**（`retry-after` ヘッダ付き）
+  - インメモリの Map による**インスタンス単位のベストエフォート**。インスタンスが複数あったり、コールドスタートで消えたりするので厳密ではない。本格的に絞るなら Upstash Redis／Vercel KV などに移す
+- どちらも Origin や IP を偽装すれば回避できる「叩かれ放題を防ぐ」程度の対策。Google AI Studio 側の利用上限・予算アラートも必ず設定しておくこと
+
 ## 仕様メモ
 - **大きな写真**：Vercel は 4.5MB を超えるリクエストを関数に届く前に弾くため、ブラウザで長辺 1536px に軽く縮めてから送る（lib/client/resize.ts）。最終的な 768px・品質80 への変換はサーバーの sharp が行う
 - **HEIC**：npm 版 sharp の標準ビルドは HEIC（HEVC）を読めない。iPhone は写真選択時に通常 JPEG へ変換され、Safari ではブラウザ側縮小でも JPEG になるので実害は小さい。読めない HEIC が届いた場合は 415 と案内文を返す
