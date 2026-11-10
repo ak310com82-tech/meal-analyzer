@@ -92,6 +92,16 @@ lib/client/        ブラウザ側ロジック
   - インメモリの Map による**インスタンス単位のベストエフォート**。インスタンスが複数あったり、コールドスタートで消えたりするので厳密ではない。本格的に絞るなら Upstash Redis／Vercel KV などに移す
 - どちらも Origin や IP を偽装すれば回避できる「叩かれ放題を防ぐ」程度の対策。Google AI Studio 側の利用上限・予算アラートも必ず設定しておくこと
 
+## 計測（第10弾）
+- **アクセス解析**：`@vercel/analytics` の `<Analytics />` を layout.tsx に組み込み済み。**Vercel ダッシュボードで Web Analytics を有効化しないとデータは集まらない**
+- **解析回数の日次カウンタ**（`lib/server/stats.ts`）：KV の環境変数（`KV_REST_API_URL` / `KV_REST_API_TOKEN`、または `UPSTASH_REDIS_REST_URL` / `_TOKEN`）があるときだけ動く
+  - キー `stats:YYYY-MM-DD`（JST）のハッシュ。フィールド `photo_ok` / `photo_nofood` / `photo_err` / `text_ok` / `text_nofood` / `text_err`（飲み会の食べ物推定は text）。各キーは400日で自動削除
+  - Gemini を実際に呼んだ結果だけ数える（モック・前処理で読めなかった画像・Origin/IP ガードで止めた分は数えない）
+  - 保存するのは日次の合計数だけ。IP・User-Agent・入力内容は保存しない
+  - 失敗しても解析レスポンスに影響しない（例外を投げない・500ms で打ち切り）
+  - `@upstash/redis` と同じ Upstash REST API（`/pipeline`）を fetch で直接呼んでいる（依存なし・タイムアウトを確実にかけるため）
+- **集計ページ** `/stats?key=<STATS_TOKEN>`：直近30日の表＋今月の合計。`STATS_TOKEN` 未設定・不一致は 404。検索エンジンには載せない（noindex）
+
 ## 仕様メモ
 - **大きな写真**：Vercel は 4.5MB を超えるリクエストを関数に届く前に弾くため、ブラウザで長辺 1536px に軽く縮めてから送る（lib/client/resize.ts）。最終的な 768px・品質80 への変換はサーバーの sharp が行う
 - **HEIC**：npm 版 sharp の標準ビルドは HEIC（HEVC）を読めない。iPhone は写真選択時に通常 JPEG へ変換され、Safari ではブラウザ側縮小でも JPEG になるので実害は小さい。読めない HEIC が届いた場合は 415 と案内文を返す

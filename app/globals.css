@@ -285,3 +285,17 @@ strong { font-weight: 700; }
 .header-home .header-text { flex: 1; min-width: 0; padding-bottom: 2px; }
 .header-doctor { width: 104px; height: auto; flex: none; display: block; margin-bottom: -10px; }
 .greeting { margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink); }
+
+/* =========================================================
+   第10弾：/stats（運営者向けの集計表）
+   ========================================================= */
+.stats { max-width: 720px; margin: 0 auto; padding: 22px 18px 40px; }
+.stats-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.stats-table th, .stats-table td { padding: 7px 8px; border-bottom: var(--line); text-align: right; white-space: nowrap; }
+.stats-table thead th { border-bottom: 2px solid var(--ink); font-size: 12px; color: var(--ink-soft); font-weight: 700; }
+.stats-table th[scope="row"], .stats-table thead th:first-child { text-align: left; font-weight: 500; }
+.stats-table td.total { font-family: var(--font-display); font-weight: 700; }
+.stats-table td.warn { color: var(--shu); font-weight: 700; }
+.stats-table tr.zero td { color: var(--rule); }
+.stats-table tfoot th, .stats-table tfoot td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); }
+.stats-today { margin-left: 6px; font-size: 10px; padding: 1px 4px; border: 1px solid var(--shu); color: var(--shu); border-radius: 2px; }

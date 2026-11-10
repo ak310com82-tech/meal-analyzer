@@ -17,6 +17,7 @@ import { analyzeMealImage, analyzeMealText, AnalysisFailedError, MAX_TEXT_LENGTH
 import { UpstreamError } from "../../../lib/meal/gemini";
 import { UnsupportedImageError } from "../../../lib/meal/preprocess";
 import { checkOrigin, clientIp, takeRateLimit } from "../../../lib/server/guard";
+import { recordAnalysis, type StatOutcome } from "../../../lib/server/stats";
 
 export const runtime = "nodejs"; // sharp を使うため
 export const dynamic = "force-dynamic";
@@ -63,7 +64,7 @@ export async function POST(req: Request): Promise<Response> {
     const text = textField.trim();
     if (!text) return err(400, "no_text", "食べたものを入力してください。");
     if ([...text].length > MAX_TEXT_LENGTH) return err(400, "text_too_long", `食べたものは${MAX_TEXT_LENGTH}文字以内で入力してください。`);
-    return respond(() => analyzeMealText(text, { apiKey }), { kind: "text" });
+    return respond(() => analyzeMealText(text, { apiKey }), { kind: "text", mock: !apiKey });
   }
 
   // ---- 写真モード ----
@@ -82,16 +83,22 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const buf = Buffer.from(await file.arrayBuffer());
-  return respond(() => analyzeMealImage(buf, { apiKey, fileName }), { kind: "photo", isHeic: isHeicByName || type.includes("hei"), fileName, type });
+  return respond(() => analyzeMealImage(buf, { apiKey, fileName }), { kind: "photo", mock: !apiKey, isHeic: isHeicByName || type.includes("hei"), fileName, type });
 }
 
 /** 解析を実行してレスポンスに変換する（写真・テキスト共通のエラー処理） */
 async function respond(
   run: () => Promise<AnalyzeOutput>,
-  ctx: { kind: "photo"; isHeic: boolean; fileName: string; type: string } | { kind: "text" },
+  ctx: ({ kind: "photo"; isHeic: boolean; fileName: string; type: string } | { kind: "text" }) & { mock: boolean },
 ): Promise<Response> {
+  /**
+   * 日次カウンタ（lib/server/stats.ts）。Gemini への実呼び出しの結果が確定したときだけ数える（モックは数えない）。
+   * recordAnalysis は例外を投げず、最長 500ms で必ず戻るので、解析レスポンスには影響しない。
+   */
+  const count = (outcome: StatOutcome) => (ctx.mock ? Promise.resolve() : recordAnalysis(ctx.kind, outcome));
   try {
     const out = await run();
+    await count(out.result.items.length > 0 ? "ok" : "nofood");
     return Response.json(out.result, {
       status: 200,
       headers: { "x-meal-mock": out.mock ? "1" : "0", "x-meal-prompt-version": out.promptVersion, "cache-control": "no-store" },
@@ -108,14 +115,17 @@ async function respond(
       );
     }
     if (e instanceof AnalysisFailedError) {
+      await count("err");
       console.error(JSON.stringify({ event: "meal_analysis_parse_failed", mode: ctx.kind, detail: e.message }));
       return err(502, "parse_failed", "解析結果を読み取れませんでした。少し時間をおいてもう一度お試しください。");
     }
     if (e instanceof UpstreamError) {
+      await count("err");
       console.error(JSON.stringify({ event: "meal_analysis_upstream_error", mode: ctx.kind, status: e.status, detail: e.message }));
       if (e.status === 429) return err(503, "busy", "混み合っています。少し時間をおいてもう一度お試しください。");
       return err(502, "upstream_error", "解析サービスに接続できませんでした。少し時間をおいてもう一度お試しください。");
     }
+    await count("err");
     console.error(JSON.stringify({ event: "meal_analysis_unknown_error", mode: ctx.kind, detail: String(e) }));
     return err(500, "internal_error", "予期しないエラーが起きました。もう一度お試しください。");
   }

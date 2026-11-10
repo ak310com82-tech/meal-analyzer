@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Kaisei_Decol, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 /**
@@ -37,7 +38,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel Web Analytics（ページビューの集計のみ。Vercel ダッシュボードで有効化が必要） */}
+        <Analytics />
+      </body>
     </html>
   );
 }
