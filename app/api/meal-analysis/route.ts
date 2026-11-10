@@ -2,6 +2,7 @@
  * POST /api/meal-analysis
  *   入力：multipart/form-data
  *     - 写真モード：フィールド image（JPEG / PNG / WebP / HEIC）
+ *       任意：dish_hint（料理名の申告、50文字まで）＋ correction="1" … 結果画面の「AIで再計算」（プロンプト v4）
  *     - テキストモード：フィールド text（食事内容の文章、300 文字まで）。image より優先しない（どちらか一方を送る）
  *   出力：解析結果 JSON（lib/meal/schema.ts の MealAnalysis そのまま）
  *         モック応答のときはレスポンスヘッダ x-meal-mock: 1
@@ -17,6 +18,7 @@ import { analyzeMealImage, analyzeMealText, AnalysisFailedError, MAX_TEXT_LENGTH
 import { UpstreamError } from "../../../lib/meal/gemini";
 import { UnsupportedImageError } from "../../../lib/meal/preprocess";
 import { checkOrigin, clientIp, takeRateLimit } from "../../../lib/server/guard";
+import { DISH_HINT_MAX } from "../../../lib/meal/prompt";
 import { recordAnalysis, type StatOutcome } from "../../../lib/server/stats";
 
 export const runtime = "nodejs"; // sharp を使うため
@@ -82,8 +84,14 @@ export async function POST(req: Request): Promise<Response> {
     return err(413, "too_large", "画像が大きすぎます（4MBまで）。もう一度選び直してください。");
   }
 
+  // 料理名でAI再計算（任意）：申告された料理名として解釈し直す
+  const hintField = form.get("dish_hint");
+  const dishHint = typeof hintField === "string" ? hintField.trim() : "";
+  if ([...dishHint].length > DISH_HINT_MAX) return err(400, "hint_too_long", `料理名は${DISH_HINT_MAX}文字以内で入力してください。`);
+  const correction = form.get("correction") === "1";
+
   const buf = Buffer.from(await file.arrayBuffer());
-  return respond(() => analyzeMealImage(buf, { apiKey, fileName }), { kind: "photo", mock: !apiKey, isHeic: isHeicByName || type.includes("hei"), fileName, type });
+  return respond(() => analyzeMealImage(buf, { apiKey, fileName, dishHint: dishHint || undefined, correction }), { kind: "photo", mock: !apiKey, isHeic: isHeicByName || type.includes("hei"), fileName, type });
 }
 
 /** 解析を実行してレスポンスに変換する（写真・テキスト共通のエラー処理） */

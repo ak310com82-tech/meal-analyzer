@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { applyCorrection, type EatenPercent, type PortionMultiplier } from "../lib/client/correction";
-import { addHistory, deleteHistory, loadHistory, updateMemo, type HistoryEntry } from "../lib/client/history";
+import { addHistory, deleteHistory, loadHistory, updateEntryItems, updateMemo, type HistoryEntry } from "../lib/client/history";
 import { consumeQuota, getQuota, FREE_MONTHLY_LIMIT } from "../lib/client/quota";
 import { ImageTooLargeError, prepareUpload } from "../lib/client/resize";
 import { analyzePhoto, analyzeText } from "../lib/client/api";
+import { HINT_PROMPT_VERSION } from "../lib/meal/prompt";
 import { ManualEntry } from "./ManualEntry";
 import { PartyMode } from "./PartyMode";
 import type { MealAnalysis } from "../lib/meal/schema";
@@ -30,6 +31,8 @@ const METHODS: { key: Method; label: string }[] = [
   { key: "party", label: "飲み会" },
 ];
 const TEXT_MAX = 300;
+/** 料理名でAI再計算は 1 つの解析結果につき 2 回まで */
+const RECALC_MAX = 2;
 
 interface Upload {
   blob: Blob;
@@ -52,6 +55,12 @@ export function MealApp() {
   const [multipliers, setMultipliers] = useState<PortionMultiplier[]>([]);
   const [eatenPercent, setEatenPercent] = useState<EatenPercent>(100);
   const [recorded, setRecorded] = useState(false);
+  /** 料理名でAI再計算：この解析結果で使った回数（2回まで。解析回数は消費しない） */
+  const [recalcCount, setRecalcCount] = useState(0);
+  const [recalcBusy, setRecalcBusy] = useState(false);
+  const [recalcError, setRecalcError] = useState("");
+  /** この結果を手で直したか（履歴に残す） */
+  const [edited, setEdited] = useState(false);
   const [quota, setQuota] = useState({ used: 0, limit: FREE_MONTHLY_LIMIT, remaining: FREE_MONTHLY_LIMIT, exhausted: false, premium: false });
   /** 「解除コードをお持ちの方」から設定のプレミアム欄へ移るとき true */
   const [focusPremium, setFocusPremium] = useState(false);
@@ -89,6 +98,9 @@ export function MealApp() {
     setMultipliers([]);
     setEatenPercent(100);
     setRecorded(false);
+    setRecalcCount(0);
+    setRecalcError("");
+    setEdited(false);
     setError("");
     setStatus("idle");
     setQuota(getQuota());
@@ -131,12 +143,47 @@ export function MealApp() {
     setAnalysisFrom({ source, promptVersion: res.promptVersion });
     setIsMock(res.mock);
     setMultipliers(res.result.items.map(() => 1));
+    setRecalcCount(0);
+    setRecalcError("");
+    setEdited(false);
     // 食事と判断できない結果（items が空）は数えない（撮り直し・書き直しで無料枠が減る理不尽さを避ける）
     setQuota(res.result.items.length > 0 ? consumeQuota() : getQuota());
     setStatus("done");
   }
 
   const analyze = () => upload && runAnalysis("photo", () => analyzePhoto(upload.blob, upload.fileName));
+
+  /**
+   * 料理名でAI再計算（写真の結果のみ）：同じ写真＋申告した料理名で解析し直し、品目を置き換える。
+   * consumeQuota は呼ばない（元の解析の 1 回だけ）。1 つの結果につき RECALC_MAX 回まで。
+   * 食べた割合はそのまま引き継ぐ。品目が変わるので量の補正（倍率）はリセット。
+   */
+  async function recalcWithDishName(dishHint: string) {
+    if (!upload || analysisFrom.source !== "photo" || recalcCount >= RECALC_MAX || !dishHint) return;
+    setRecalcBusy(true);
+    setRecalcError("");
+    const res = await analyzePhoto(upload.blob, upload.fileName, dishHint);
+    setRecalcBusy(false);
+    if (!res.ok) return setRecalcError(res.message); // 通信・API エラーは回数に数えない
+    setRecalcCount((c) => c + 1);
+    if (res.result.items.length === 0) {
+      return setRecalcError("その料理名では推定できませんでした。料理名を変えるか、『内容を修正』で直してください。");
+    }
+    setAnalysis(res.result);
+    setAnalysisFrom({ source: "photo", promptVersion: res.promptVersion });
+    setIsMock(res.mock);
+    setMultipliers(res.result.items.map(() => 1));
+    setEdited(false);
+  }
+
+  /** 品目の手修正（結果画面）：生の品目を置き換え、倍率は元の行から引き継ぐ。API・回数とは無関係 */
+  function applyItemEdits(rows: { item: MealAnalysis["items"][number]; srcIndex: number | null }[]) {
+    if (!analysis || rows.length === 0) return;
+    const total = rows.reduce((a, r) => a + r.item.kcal, 0);
+    setAnalysis({ ...analysis, items: rows.map((r) => r.item), total_kcal: total, half_total_kcal: Math.round(total / 2) });
+    setMultipliers(rows.map((r) => (r.srcIndex != null ? multipliers[r.srcIndex] ?? 1 : 1)));
+    setEdited(true);
+  }
   const analyzeMealText = () => mealText.trim() && runAnalysis("text", () => analyzeText(mealText.trim()));
 
   function record() {
@@ -148,6 +195,8 @@ export function MealApp() {
       confidence: analysis.confidence,
       note: analysis.note,
       eatenPercent: corrected.eatenPercent,
+      edited: edited || undefined,
+      recalculated: analysisFrom.promptVersion === HINT_PROMPT_VERSION || undefined,
       isShared: analysis.is_shared,
       items: corrected.items,
       totals: corrected.totals,
@@ -230,6 +279,11 @@ export function MealApp() {
             onDelete={(id) => setHistory(deleteHistory(id))}
             onMemo={(id, memo) => {
               const r = updateMemo(id, memo);
+              if (r.ok) setHistory(r.list);
+              return r.ok;
+            }}
+            onEditItems={(id, items) => {
+              const r = updateEntryItems(id, items);
               if (r.ok) setHistory(r.list);
               return r.ok;
             }}
@@ -351,6 +405,12 @@ export function MealApp() {
                 recorded={recorded}
                 onReset={reset}
                 source={analysisFrom.source}
+                onEditItems={applyItemEdits}
+                recalc={
+                  analysisFrom.source === "photo" && upload
+                    ? { count: recalcCount, max: RECALC_MAX, busy: recalcBusy, error: recalcError, onRun: recalcWithDishName }
+                    : undefined
+                }
               />
             )}
           </>

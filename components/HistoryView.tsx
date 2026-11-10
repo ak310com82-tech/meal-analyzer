@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { groupByDay, MEMO_MAX, SOURCE_LABEL, type HistoryEntry } from "../lib/client/history";
+import { canEditItems, groupByDay, MEMO_MAX, SOURCE_LABEL, type HistoryEntry } from "../lib/client/history";
+import type { CorrectedItem } from "../lib/client/correction";
+import { ItemEditor } from "./ItemEditor";
 
 const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -23,9 +25,11 @@ interface Props {
   onDelete: (id: string) => void;
   /** メモを保存。成功したら true */
   onMemo: (id: string, memo: string) => boolean;
+  /** 品目の修正を保存。成功したら true */
+  onEditItems: (id: string, items: CorrectedItem[]) => boolean;
 }
 
-export function HistoryView({ history, onDelete, onMemo }: Props) {
+export function HistoryView({ history, onDelete, onMemo, onEditItems }: Props) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   if (history.length === 0) {
@@ -75,6 +79,7 @@ export function HistoryView({ history, onDelete, onMemo }: Props) {
                         )}
                         {e.halfMode && <span className="tag">ハーフ</span>}
                         {e.isShared && <span className="tag">全量</span>}
+                        {e.edited && <span className="tag tag-source">修正済み</span>}
                         {e.mock && <span className="tag tag-mock">MOCK</span>}
                       </span>
                       <span className="entry-items">{e.items.map((i) => i.name).join("、")}</span>
@@ -96,7 +101,7 @@ export function HistoryView({ history, onDelete, onMemo }: Props) {
                       ×
                     </button>
                   </div>
-                  {open && <EntryDetail entry={e} onSave={(memo) => onMemo(e.id, memo)} />}
+                  {open && <EntryDetail entry={e} onSave={(memo) => onMemo(e.id, memo)} onEditItems={(items) => onEditItems(e.id, items)} />}
                 </li>
               );
             })}
@@ -108,12 +113,31 @@ export function HistoryView({ history, onDelete, onMemo }: Props) {
   );
 }
 
-function EntryDetail({ entry, onSave }: { entry: HistoryEntry; onSave: (memo: string) => boolean }) {
+function EntryDetail({ entry, onSave, onEditItems }: { entry: HistoryEntry; onSave: (memo: string) => boolean; onEditItems: (items: CorrectedItem[]) => boolean }) {
   const [memo, setMemo] = useState(entry.memo ?? "");
+  const [editing, setEditing] = useState(false);
+  const [editMsg, setEditMsg] = useState<"" | "saved" | "error">("");
   const [state, setState] = useState<"idle" | "saved" | "error">("idle");
   useEffect(() => setMemo(entry.memo ?? ""), [entry.memo]);
   const over = len(memo) > MEMO_MAX;
   const dirty = memo.trim() !== (entry.memo ?? "");
+
+  if (editing) {
+    return (
+      <div className="entry-detail" data-testid="entry-detail">
+        <ItemEditor
+          items={entry.items}
+          lead={`記録した値（${entry.eatenPercent && entry.eatenPercent !== 100 ? `食べた割合 ${entry.eatenPercent}% をかけた後の値` : "確定した値"}）を直接直せます。合計は品目の合計で計算し直します。解析回数は使いません。`}
+          onCancel={() => setEditing(false)}
+          onSave={(rows) => {
+            const items: CorrectedItem[] = rows.map((r) => ({ ...r.item, multiplier: r.src?.multiplier ?? 1 }));
+            setEditMsg(onEditItems(items) ? "saved" : "error");
+            setEditing(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="entry-detail" data-testid="entry-detail">
@@ -132,6 +156,13 @@ function EntryDetail({ entry, onSave }: { entry: HistoryEntry; onSave: (memo: st
         P {entry.totals.protein_g}g ・ F {entry.totals.fat_g}g ・ C {entry.totals.carbs_g}g
       </div>
       {entry.note && <p className="note">{entry.note}</p>}
+      {canEditItems(entry) && (
+        <button className="text-btn text-btn-left" onClick={() => setEditing(true)} data-testid="entry-edit">
+          内容を修正
+        </button>
+      )}
+      {editMsg === "saved" && <p className="ok-msg small" data-testid="entry-edit-msg">修正を保存しました</p>}
+      {editMsg === "error" && <p className="error small">保存できませんでした（ブラウザの保存領域が使えない設定かもしれません）。</p>}
 
       <label className="field">
         <span className="field-label">メモ（自分用）</span>

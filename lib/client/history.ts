@@ -34,6 +34,10 @@ export interface HistoryEntry {
   note: string;
   /** 自分用メモ（200 文字まで。第8弾〜） */
   memo?: string;
+  /** 品目を手で修正した（第12弾〜） */
+  edited?: boolean;
+  /** 料理名でAI再計算した結果を記録した（第12弾〜） */
+  recalculated?: boolean;
   /** 食べた割合（%）。第2弾〜。古い記録には無い（＝100%扱い） */
   eatenPercent?: EatenPercent;
   /** 旧「全体がハーフサイズ」トグル（廃止）。古い記録の表示用に残す */
@@ -77,6 +81,26 @@ export function addHistory(entry: Omit<HistoryEntry, "id" | "createdAt">, now = 
 export function updateMemo(id: string, memo: string): { ok: boolean; list: HistoryEntry[] } {
   const clean = Array.from(memo.trim()).slice(0, MEMO_MAX).join("");
   const list = loadHistory().map((e) => (e.id === id ? { ...e, memo: clean || undefined } : e));
+  return { ok: writeJson(KEY, list), list };
+}
+
+/** 入力方法ごとに「内容を修正」できるか（飲み会は構造が違うため対象外） */
+export const canEditItems = (e: HistoryEntry) => (e.source ?? "photo") !== "party";
+
+/**
+ * 履歴の品目を手で修正（割合をかけた後の確定値を直接置き換える）。
+ * 合計は品目の単純合計で計算し直す。食べた割合などのメタ・メモは変えない。品目 0 件は不可。
+ */
+export function updateEntryItems(id: string, items: CorrectedItem[]): { ok: boolean; list: HistoryEntry[] } {
+  const r1 = (n: number) => Math.round(n * 10) / 10;
+  const list0 = loadHistory();
+  const target = list0.find((e) => e.id === id);
+  if (!target || items.length === 0 || !canEditItems(target)) return { ok: false, list: list0 };
+  const totals = items.reduce(
+    (t, x) => ({ kcal: t.kcal + x.kcal, protein_g: r1(t.protein_g + x.protein_g), fat_g: r1(t.fat_g + x.fat_g), carbs_g: r1(t.carbs_g + x.carbs_g) }),
+    { kcal: 0, protein_g: 0, fat_g: 0, carbs_g: 0 },
+  );
+  const list = list0.map((e) => (e.id === id ? { ...e, items, totals, edited: true } : e));
   return { ok: writeJson(KEY, list), list };
 }
 

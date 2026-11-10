@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import type { MealAnalysis } from "../lib/meal/schema";
+import { DISH_HINT_MAX } from "../lib/meal/prompt";
+import { ItemEditor, type EditableItem } from "./ItemEditor";
 import { EATEN_OPTIONS, PORTION_OPTIONS, type CorrectedMeal, type EatenPercent, type PortionMultiplier } from "../lib/client/correction";
 
 interface Props {
@@ -14,10 +17,15 @@ interface Props {
   onReset: () => void;
   /** 結果の元になった入力方法（文言の出し分けに使う） */
   source?: "photo" | "text";
+  /** 品目の手修正を保存（生の品目＝割合・倍率をかける前の値。倍率は index で引き継ぐ） */
+  onEditItems: (rows: { item: EditableItem; srcIndex: number | null }[]) => void;
+  /** 料理名でAI再計算（写真の結果のときだけ渡す） */
+  recalc?: { count: number; max: number; busy: boolean; error: string; onRun: (dishHint: string) => void };
 }
 
-export function ResultView({ analysis, corrected, multipliers, onMultiplier, onEatenPercent, onRecord, recorded, onReset, source = "photo" }: Props) {
+export function ResultView({ analysis, corrected, multipliers, onMultiplier, onEatenPercent, onRecord, recorded, onReset, source = "photo", onEditItems, recalc }: Props) {
   const isText = source === "text";
+  const [editing, setEditing] = useState(false);
   if (analysis.items.length === 0) {
     return (
       <section className="card" data-testid="result-nofood">
@@ -62,6 +70,18 @@ export function ResultView({ analysis, corrected, multipliers, onMultiplier, onE
 
       {!analysis.is_shared && eaten}
 
+      {editing ? (
+        <ItemEditor
+          items={analysis.items.map((it, i) => ({ ...it, index: i }))}
+          lead="AIの推定値（量の補正・食べた割合をかける前）を直せます。保存すると合計を計算し直します。解析回数は使いません。"
+          sumLabel="合計（補正前）"
+          onCancel={() => setEditing(false)}
+          onSave={(rows) => {
+            onEditItems(rows.map((r) => ({ item: r.item, srcIndex: r.src ? r.src.index : null })));
+            setEditing(false);
+          }}
+        />
+      ) : (
       <ul className="items">
         {corrected.items.map((it, i) => (
           <li key={i} className="item" data-testid="item">
@@ -92,8 +112,18 @@ export function ResultView({ analysis, corrected, multipliers, onMultiplier, onE
           </li>
         ))}
       </ul>
+      )}
 
-      <button className="btn btn-primary btn-block" onClick={onRecord} disabled={recorded} data-testid="record">
+      {!recorded && !editing && (
+        <div className="fix-tools">
+          <button className="text-btn text-btn-left" onClick={() => setEditing(true)} data-testid="edit-open">
+            内容を修正
+          </button>
+          {recalc && <RecalcBox {...recalc} />}
+        </div>
+      )}
+
+      <button className="btn btn-primary btn-block" onClick={onRecord} disabled={recorded || editing} data-testid="record">
         {recorded ? "記録しました ✓" : "記録する"}
       </button>
       {recorded ? (
@@ -136,6 +166,41 @@ function EatenSelector({ value, onChange, prominent }: { value: EatenPercent; on
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+/** 料理名でAI再計算（写真の結果のみ）。同じ写真＋申告した料理名で解析し直す。解析回数は使わない（1結果につき2回まで） */
+function RecalcBox({ count, max, busy, error, onRun }: { count: number; max: number; busy: boolean; error: string; onRun: (dishHint: string) => void }) {
+  const [hint, setHint] = useState("");
+  const used = count >= max;
+  return (
+    <div className="recalc" data-testid="recalc">
+      <div className="recalc-title">料理名が違う場合はこちら</div>
+      <p className="muted small">正しい料理名を入れると、同じ写真をその料理としてAIが計算し直します（量も含めて推定。解析回数は減りません）。</p>
+      <div className="field-row">
+        <input
+          className="text-input"
+          placeholder="例：もつ鍋"
+          value={hint}
+          maxLength={DISH_HINT_MAX}
+          onChange={(e) => setHint(e.target.value)}
+          disabled={used || busy}
+          aria-label="正しい料理名"
+          data-testid="recalc-input"
+        />
+        <button className="btn btn-primary" onClick={() => onRun(hint.trim())} disabled={used || busy || !hint.trim()} data-testid="recalc-run">
+          {busy ? "計算中…" : "AIで再計算"}
+        </button>
+      </div>
+      <p className="muted small" data-testid="recalc-count">
+        {used ? "再計算は2回までです。細かい修正は『内容を修正』からできます" : `再計算できるのはあと${max - count}回です`}
+      </p>
+      {error && (
+        <p className="error small" role="status" data-testid="recalc-error">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

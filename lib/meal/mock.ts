@@ -6,13 +6,61 @@ import type { GeminiCallResult } from "./gemini";
  *   - 名前に "nofood"   → 食事が写っていない場合の応答
  *   - 名前に "lowconf"  → confidence: low の応答
  *   - 名前に "shared"   → 鍋（全量・is_shared: true）の応答
+ *   - 名前に "motsunabe" → もつ鍋を牛肉・割り下と誤読（第12弾の再計算の確認用）
+ *   - dish_hint あり    → 申告どおりの料理（「もつ鍋」ならもつ鍋の全量、それ以外はその名前の1人前）
  *   - 名前に "broken"   → JSON 崩れ（リトライ → 502 の確認用）
  *   - それ以外          → 定食の応答
  */
-export async function callMock(fileName: string): Promise<GeminiCallResult> {
+export async function callMock(fileName: string, dishHint = ""): Promise<GeminiCallResult> {
   await new Promise((r) => setTimeout(r, 400));
   const name = fileName.toLowerCase();
   const usage = { inputTokens: 1100, outputTokens: 320, thoughtsTokens: 0, imageTokens: 258 };
+
+  const json = (v: object): GeminiCallResult => ({ text: JSON.stringify(v), usage, finishReason: "STOP" });
+
+  // ---- 料理名でAI再計算（dish_hint）：申告どおりの料理として推定し直す ----
+  if (dishHint) {
+    if (dishHint.includes("もつ鍋")) {
+      return json({
+        items: [
+          { name: "（MOCK）牛もつ（小腸）", amount: "約300g（鍋全体）", kcal: 860, protein_g: 28, fat_g: 80, carbs_g: 0 },
+          { name: "（MOCK）キャベツ", amount: "約1/4玉 300g", kcal: 63, protein_g: 3.9, fat_g: 0.6, carbs_g: 15.6 },
+          { name: "（MOCK）ニラ", amount: "1束 100g", kcal: 18, protein_g: 1.7, fat_g: 0.3, carbs_g: 4 },
+          { name: "（MOCK）豆腐", amount: "1/2丁 150g", kcal: 110, protein_g: 10, fat_g: 7, carbs_g: 2.4 },
+          { name: "（MOCK）醤油ベースのスープ", amount: "約600ml", kcal: 120, protein_g: 6, fat_g: 2, carbs_g: 18 },
+        ],
+        total_kcal: 1171,
+        half_total_kcal: 586,
+        is_shared: true,
+        confidence: "medium",
+        note: "（MOCK）申告どおりもつ鍋として推定。鍋全体の全量として推定",
+      });
+    }
+    return json({
+      items: [{ name: `（MOCK）${dishHint}`, amount: "1人前", kcal: 600, protein_g: 22, fat_g: 20, carbs_g: 75 }],
+      total_kcal: 600,
+      half_total_kcal: 300,
+      is_shared: false,
+      confidence: "medium",
+      note: `（MOCK）申告どおり「${dishHint}」として推定。通常1人前として計算`,
+    });
+  }
+
+  // ---- もつ鍋の誤読を再現（実例：牛肉・すき焼きの割り下と読み違えた）----
+  if (name.includes("motsunabe")) {
+    return json({
+      items: [
+        { name: "（MOCK）牛肉（薄切り）", amount: "約200g", kcal: 520, protein_g: 34, fat_g: 40, carbs_g: 0.6 },
+        { name: "（MOCK）すき焼きの割り下", amount: "約150ml", kcal: 210, protein_g: 4, fat_g: 0, carbs_g: 45 },
+        { name: "（MOCK）キャベツ", amount: "約200g", kcal: 42, protein_g: 2.6, fat_g: 0.4, carbs_g: 10.4 },
+      ],
+      total_kcal: 772,
+      half_total_kcal: 386,
+      is_shared: true,
+      confidence: "medium",
+      note: "（MOCK）すき焼きとして全量で推定",
+    });
+  }
 
   if (name.includes("broken")) return { text: '{"items": [ {"name": "ごはん"', usage, finishReason: "MAX_TOKENS" };
 

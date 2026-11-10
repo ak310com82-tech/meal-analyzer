@@ -5,7 +5,7 @@
 import { callGemini, MODEL_ID, photoParts, textParts, type GeminiCallResult, type GeminiUsage } from "./gemini";
 import { callMock, callMockText } from "./mock";
 import { preprocessImage } from "./preprocess";
-import { MEAL_PROMPT, PROMPT_VERSION, TEXT_INPUT_LABEL, TEXT_PROMPT, TEXT_PROMPT_VERSION } from "./prompt";
+import { buildHintPrompt, HINT_PROMPT_VERSION, MEAL_PROMPT, PROMPT_VERSION, TEXT_INPUT_LABEL, TEXT_PROMPT, TEXT_PROMPT_VERSION } from "./prompt";
 import { parseMealJson, type MealAnalysis } from "./schema";
 
 export class AnalysisFailedError extends Error {}
@@ -35,6 +35,7 @@ function logUsage(entry: {
   error?: string;
   image?: { width: number; height: number; bytes: number };
   textLength?: number;
+  correction?: boolean;
 }) {
   console.log(JSON.stringify({ event: "meal_analysis_call", model: MODEL_ID, ...entry, at: new Date().toISOString() }));
 }
@@ -42,7 +43,7 @@ function logUsage(entry: {
 /** 呼び出し → 厳密パース。パース失敗時は 1 回だけリトライ。API エラー（UpstreamError）はそのまま上へ */
 async function runWithRetry(
   call: () => Promise<GeminiCallResult>,
-  meta: { mode: AnalysisMode; promptVersion: string; mock: boolean; image?: { width: number; height: number; bytes: number }; textLength?: number },
+  meta: { mode: AnalysisMode; promptVersion: string; mock: boolean; image?: { width: number; height: number; bytes: number }; textLength?: number; correction?: boolean },
 ): Promise<AnalyzeOutput> {
   const MAX_ATTEMPTS = 2;
   let lastError = "";
@@ -64,12 +65,27 @@ async function runWithRetry(
   throw new AnalysisFailedError(lastError);
 }
 
-export async function analyzeMealImage(input: Buffer, opts: { apiKey?: string; fileName: string }): Promise<AnalyzeOutput> {
+/**
+ * 写真の解析。dishHint があれば「料理名の申告つき」プロンプト（v4）で解析する（第12弾の再計算）。
+ * correction は「結果画面からの再計算」かどうかの印（ログ用。回数の扱いはクライアント側）。
+ */
+export async function analyzeMealImage(
+  input: Buffer,
+  opts: { apiKey?: string; fileName: string; dishHint?: string; correction?: boolean },
+): Promise<AnalyzeOutput> {
   const img = await preprocessImage(input); // UnsupportedImageError はそのまま上へ
   const mock = !opts.apiKey;
+  const hint = opts.dishHint?.trim() || "";
+  const prompt = hint ? buildHintPrompt(hint) : MEAL_PROMPT;
   return runWithRetry(
-    () => (mock ? callMock(opts.fileName) : callGemini(opts.apiKey!, photoParts(MEAL_PROMPT, img.jpeg))),
-    { mode: "photo", promptVersion: PROMPT_VERSION, mock, image: { width: img.width, height: img.height, bytes: img.jpeg.length } },
+    () => (mock ? callMock(opts.fileName, hint) : callGemini(opts.apiKey!, photoParts(prompt, img.jpeg))),
+    {
+      mode: "photo",
+      promptVersion: hint ? HINT_PROMPT_VERSION : PROMPT_VERSION,
+      mock,
+      image: { width: img.width, height: img.height, bytes: img.jpeg.length },
+      correction: Boolean(opts.correction),
+    },
   );
 }
 

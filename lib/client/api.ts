@@ -28,9 +28,17 @@ async function post(fd: FormData): Promise<AnalysisResponse> {
   }
 }
 
-export function analyzePhoto(blob: Blob, fileName: string) {
+/**
+ * 写真の解析。dishHint を渡すと「料理名でAI再計算」（correction=1、プロンプト v4）になる。
+ * 再計算でも API は同じ（Origin チェック・IP ごとの上限もそのまま）。回数の消費は呼び出し側で判断する。
+ */
+export function analyzePhoto(blob: Blob, fileName: string, dishHint?: string) {
   const fd = new FormData();
   fd.append("image", blob, fileName);
+  if (dishHint) {
+    fd.append("dish_hint", dishHint);
+    fd.append("correction", "1");
+  }
   return post(fd);
 }
 

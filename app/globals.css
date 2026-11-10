@@ -323,3 +323,15 @@ strong { font-weight: 700; }
 .legal-row dt { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
 .legal-row dd { margin: 2px 0 0; font-size: 14px; line-height: 1.7; }
 .billing .tabs, .legal .tabs { display: none; }
+
+/* =========================================================
+   第12弾：内容を修正・料理名でAI再計算
+   ========================================================= */
+.fix-tools { margin-top: 14px; padding-top: 4px; border-top: var(--line); }
+.fix-tools > .text-btn { margin-top: 6px; }
+.recalc { margin-top: 12px; padding: 12px 0 2px; border-top: 1px dashed var(--rule); }
+.recalc-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+.recalc .field-row { margin-top: 8px; }
+.recalc .field-row .btn { min-height: 46px; padding: 0 14px; flex: none; }
+.item-editor { margin-top: 12px; }
+.editor-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }

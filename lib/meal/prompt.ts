@@ -47,6 +47,37 @@ export const MEAL_PROMPT = `あなたは管理栄養士の知識を持つ食事�
 }`;
 
 /**
+ * 料理名の申告つき写真プロンプト（第12弾「料理名でAI再計算」）。
+ * v3 の全文に、ユーザーの申告を解釈の前提として差し込む。申告があるときだけこの版（v4）を使う。
+ */
+export const HINT_PROMPT_VERSION = "v4";
+/** 申告できる料理名の上限（文字数） */
+export const DISH_HINT_MAX = 50;
+
+/** 申告をプロンプトに安全に埋め込むための整形（改行・括弧・制御文字を除き、50文字に切る） */
+export function sanitizeDishHint(input: string): string {
+  return Array.from(
+    input
+      .normalize("NFKC")
+      .replace(/[\u0000-\u001f\u007f]/g, " ")
+      .replace(/[『』「」"`]/g, "")
+      .replace(/\s+/g, " ")
+      .trim(),
+  )
+    .slice(0, DISH_HINT_MAX)
+    .join("");
+}
+
+export function buildHintPrompt(dishHint: string): string {
+  const hint = sanitizeDishHint(dishHint);
+  const insert = `ユーザーの申告:
+- ユーザーの申告では、この料理は『${hint}』である。写真の内容をこの料理として解釈し、材料・量・カロリーを推定すること。申告と写真が明らかに矛盾する場合のみ写真を優先する。
+
+出力ルール:`;
+  return MEAL_PROMPT.replace("出力ルール:", insert);
+}
+
+/**
  * テキスト解析用プロンプト（全文固定）。写真がない場面で、文章の食事内容から推定する。
  * 返却スキーマは写真版と同一。文言を変えたら TEXT_PROMPT_VERSION を上げること。
  */
