@@ -5,6 +5,7 @@ import { analyzeText } from "../lib/client/api";
 import { addHistory } from "../lib/client/history";
 import { DRINKS, MAX_CUPS, clampCups, drinkItems, drinksTotalKcal, emptyCounts, loadPartyDraft, savePartyDraft, type DrinkCounts } from "../lib/client/party";
 import { consumeQuota, getQuota } from "../lib/client/quota";
+import { QuotaOver } from "./QuotaOver";
 
 /**
  * 飲み会モード：お酒の杯数（API を使わない）＋「食べたもの」の文章（テキスト解析）を 1 件の記録にまとめる。
@@ -13,12 +14,12 @@ import { consumeQuota, getQuota } from "../lib/client/quota";
  */
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
-export function PartyMode({ quotaExhausted, onRecorded }: { quotaExhausted: boolean; onRecorded: () => void }) {
+export function PartyMode({ quotaExhausted, premium, onRecorded, onHaveCode }: { quotaExhausted: boolean; premium: boolean; onRecorded: () => void; onHaveCode: () => void }) {
   // 途中経過を復元（タブ切り替え・再読み込みで杯数が消えないように）。この画面は操作後にだけ表示されるので初期値で読んでよい
   const [counts, setCounts] = useState<DrinkCounts>(() => loadPartyDraft().counts);
   const [food, setFood] = useState(() => loadPartyDraft().food);
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [msg, setMsg] = useState<{ kind: "ok" | "err" | "quota"; text: string } | null>(null);
   useEffect(() => savePartyDraft({ counts, food }), [counts, food]);
 
   const drinksKcal = drinksTotalKcal(counts);
@@ -37,7 +38,7 @@ export function PartyMode({ quotaExhausted, onRecorded }: { quotaExhausted: bool
 
     if (foodText) {
       if (getQuota().exhausted) {
-        return setMsg({ kind: "err", text: "今月の無料枠は終わりです。有料プランは準備中です（食べたものの欄を空にすると、お酒だけ記録できます）" });
+        return setMsg({ kind: "quota", text: "" });
       }
       setBusy(true);
       foodResult = await analyzeText(foodText);
@@ -137,13 +138,18 @@ export function PartyMode({ quotaExhausted, onRecorded }: { quotaExhausted: bool
       />
       <p className="muted small">
         入れると記録するときにAIで推定します（解析を1回使います）。分け合った料理は「もつ鍋1人前」のように自分の分の量で書いてください。空欄ならお酒だけで記録できます。
-        {quotaExhausted && foodText && " 今月の無料枠は終わっているため、食べたものの推定はできません。"}
+        {quotaExhausted && foodText && (premium ? " 今月の上限に達しているため、食べたものの推定はできません。" : " 今月の無料枠は終わっているため、食べたものの推定はできません。")}
       </p>
 
       <button className="btn btn-primary btn-block" disabled={!canRecord} onClick={record} data-testid="party-record">
         {busy ? "食べたものを推定しています…" : "記録する"}
       </button>
-      {msg && (
+      {msg?.kind === "quota" && (
+        <div role="status" data-testid="party-msg">
+          <QuotaOver premium={premium} onHaveCode={onHaveCode} note="食べたものの欄を空にすると、お酒だけ記録できます" />
+        </div>
+      )}
+      {msg && msg.kind !== "quota" && (
         <p className={msg.kind === "ok" ? "ok-msg" : "error"} role="status" data-testid="party-msg">
           {msg.text}
         </p>

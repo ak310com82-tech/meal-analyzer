@@ -55,13 +55,43 @@ export const RATE_LIMIT = 20;
 export const RATE_WINDOW_MS = 60 * 60 * 1000;
 
 /**
- * インメモリの Map（IP → 直近1時間の呼び出し時刻）。
+ * インメモリの Map（IP → 直近の呼び出し時刻）による回数制限。
  * サーバーレスではインスタンスごとに別々の Map になり、コールドスタートで消える。
  * 「インスタンス単位のベストエフォート」で十分という前提の簡易実装。
  * 本格的に絞るなら Upstash Redis / Vercel KV などの共有ストアに移すこと。
  */
-const hits = new Map<string, number[]>();
-const MAX_TRACKED_IPS = 10_000;
+export function createRateLimiter(limit: number, windowMs: number, maxTrackedIps = 10_000) {
+  const hits = new Map<string, number[]>();
+  const prune = (now: number) => {
+    const since = now - windowMs;
+    for (const [ip, ts] of hits) {
+      const recent = ts.filter((t) => t > since);
+      if (recent.length) hits.set(ip, recent);
+      else hits.delete(ip);
+    }
+  };
+  return {
+    /** 1 回分を数えて、上限を超えていれば ok: false と再試行までの秒数を返す */
+    take(ip: string, now = Date.now()): { ok: true; remaining: number } | { ok: false; retryAfterSec: number } {
+      const since = now - windowMs;
+      const recent = (hits.get(ip) ?? []).filter((t) => t > since);
+      if (recent.length >= limit) {
+        hits.set(ip, recent);
+        return { ok: false, retryAfterSec: Math.max(1, Math.ceil((recent[0] + windowMs - now) / 1000)) };
+      }
+      recent.push(now);
+      hits.set(ip, recent);
+      if (hits.size > maxTrackedIps) prune(now);
+      return { ok: true, remaining: limit - recent.length };
+    },
+    reset() {
+      hits.clear();
+    },
+  };
+}
+
+/** 解析 API（POST /api/meal-analysis）用：1 時間に 20 回まで */
+const analysisLimiter = createRateLimiter(RATE_LIMIT, RATE_WINDOW_MS);
 
 export function clientIp(req: Request): string {
   // Vercel では x-forwarded-for の先頭がクライアントの IP
@@ -70,31 +100,12 @@ export function clientIp(req: Request): string {
   return ip || "unknown";
 }
 
-/** 1 回分を数えて、上限を超えていれば ok: false と再試行までの秒数を返す */
-export function takeRateLimit(ip: string, now = Date.now()): { ok: true; remaining: number } | { ok: false; retryAfterSec: number } {
-  const since = now - RATE_WINDOW_MS;
-  const recent = (hits.get(ip) ?? []).filter((t) => t > since);
-  if (recent.length >= RATE_LIMIT) {
-    hits.set(ip, recent);
-    return { ok: false, retryAfterSec: Math.max(1, Math.ceil((recent[0] + RATE_WINDOW_MS - now) / 1000)) };
-  }
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > MAX_TRACKED_IPS) prune(now);
-  return { ok: true, remaining: RATE_LIMIT - recent.length };
-}
-
-/** 古い記録を掃除（メモリが増え続けないように） */
-function prune(now: number) {
-  const since = now - RATE_WINDOW_MS;
-  for (const [ip, ts] of hits) {
-    const recent = ts.filter((t) => t > since);
-    if (recent.length) hits.set(ip, recent);
-    else hits.delete(ip);
-  }
+/** 1 回分を数えて、上限を超えていれば ok: false と再試行までの秒数を返す（解析 API 用） */
+export function takeRateLimit(ip: string, now = Date.now()) {
+  return analysisLimiter.take(ip, now);
 }
 
 /** テスト用：記録を消す */
 export function resetRateLimit() {
-  hits.clear();
+  analysisLimiter.reset();
 }

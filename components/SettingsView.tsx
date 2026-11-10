@@ -3,10 +3,23 @@
 import { useState } from "react";
 import { calcBmr, type Profile, type Sex } from "../lib/client/energy";
 import { validateProfile } from "../lib/client/profile";
+import { PremiumSection } from "./PremiumSection";
 
 const toNum = (s: string) => (s.trim() === "" ? NaN : Number(s));
 
-export function SettingsView({ profile, onSave }: { profile: Profile | null; onSave: (p: Profile) => boolean }) {
+export function SettingsView({
+  profile,
+  onSave,
+  focusPremium = false,
+  onPremiumFocused = () => {},
+  onPremiumChange = () => {},
+}: {
+  profile: Profile | null;
+  onSave: (p: Profile) => boolean;
+  focusPremium?: boolean;
+  onPremiumFocused?: () => void;
+  onPremiumChange?: () => void;
+}) {
   const [sex, setSex] = useState<Sex | "">(profile?.sex ?? "");
   const [age, setAge] = useState(profile ? String(profile.age) : "");
   const [height, setHeight] = useState(profile ? String(profile.heightCm) : "");
@@ -36,6 +49,7 @@ export function SettingsView({ profile, onSave }: { profile: Profile | null; onS
   }
 
   return (
+    <>
     <section className="card" data-testid="settings">
       <h2 className="card-title">プロフィール</h2>
       <p className="muted small">基礎代謝と歩数の消費カロリーの計算に使います。この端末内にだけ保存されます。</p>
@@ -96,6 +110,8 @@ export function SettingsView({ profile, onSave }: { profile: Profile | null; onS
         </p>
       )}
     </section>
+    <PremiumSection focus={focusPremium} onFocused={onPremiumFocused} onChange={onPremiumChange} />
+    </>
   );
 }
 

@@ -25,13 +25,8 @@ const READ_TIMEOUT_MS = 3000;
 /** 日次キーの保存期間。古い日は自動で消える */
 const KEY_TTL_SEC = 400 * 24 * 60 * 60;
 
-type Env = Record<string, string | undefined>;
-
-export function kvConfig(env: Env = process.env): { url: string; token: string } | null {
-  const url = (env.KV_REST_API_URL || env.UPSTASH_REDIS_REST_URL || "").trim().replace(/\/+$/, "");
-  const token = (env.KV_REST_API_TOKEN || env.UPSTASH_REDIS_REST_TOKEN || "").trim();
-  return url && token ? { url, token } : null;
-}
+import { kvConfig, kvPipeline as pipeline, type Env } from "./kv";
+export { kvConfig };
 
 /** JST の日付 YYYY-MM-DD（サーバーのタイムゾーンに依存しない） */
 export function jstDate(at: Date | number = Date.now()): string {
@@ -40,21 +35,6 @@ export function jstDate(at: Date | number = Date.now()): string {
 }
 
 export const statsKey = (date: string) => `stats:${date}`;
-
-async function pipeline(cfg: { url: string; token: string }, commands: (string | number)[][], timeoutMs: number): Promise<unknown[]> {
-  const res = await fetch(`${cfg.url}/pipeline`, {
-    method: "POST",
-    headers: { authorization: `Bearer ${cfg.token}`, "content-type": "application/json" },
-    body: JSON.stringify(commands),
-    signal: AbortSignal.timeout(timeoutMs),
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error(`KV HTTP ${res.status}`);
-  const json = (await res.json()) as { result?: unknown; error?: string }[];
-  const failed = json.find((r) => r && r.error);
-  if (failed) throw new Error(`KV error: ${failed.error}`);
-  return json.map((r) => r?.result);
-}
 
 /**
  * 1 回分を数える。KV 未設定なら何もしない。失敗しても例外を投げない（ログだけ残す）。

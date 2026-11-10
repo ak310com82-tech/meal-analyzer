@@ -102,6 +102,26 @@ lib/client/        ブラウザ側ロジック
   - `@upstash/redis` と同じ Upstash REST API（`/pipeline`）を fetch で直接呼んでいる（依存なし・タイムアウトを確実にかけるため）
 - **集計ページ** `/stats?key=<STATS_TOKEN>`：直近30日の表＋今月の合計。`STATS_TOKEN` 未設定・不一致は 404。検索エンジンには載せない（noindex）
 
+## 課金（第11弾）：Stripe 決済リンク＋解除コード
+無料は月5回、プレミアム（月300円・解除コードが有効）は月90回。アカウント制はなし。
+1. 枠切れ画面の「月300円で月90回まで使う」→ Stripe Payment Link
+2. Webhook（`/api/stripe/webhook`、署名検証あり）で解除コード `GS-XXXXXX-XXXXXX` を発行して KV に保存
+3. `/billing/success?session_id=...` でコードを表示（最初の表示から30分で見られなくなる）
+4. 設定 → プレミアム でコードを入力 → `/api/billing/validate` で照合 → この端末の上限が90回に
+5. 更新（`invoice.paid`）で期限延長、解約（`customer.subscription.deleted`）で無効化。端末は7日ごと／期限切れ時に再照合
+
+**KV の保存設計**（値は JSON 文字列）
+| キー | 値 | 備考 |
+|---|---|---|
+| `code:<SHA-256(コード)>` | `{status, period_end, stripe_customer, stripe_subscription, cancel_at_period_end, created_at, updated_at}` | 平文コードはキーにしない |
+| `session:<Checkout Session ID>` | `{code, created_at, first_shown_at?}` | 成功ページ用。未表示なら7日、表示後30分で消える |
+| `sub:<Subscription ID>` | `{code_hash, period_end, status, cancel_at_period_end}` | 逆引き用（invoice / subscription イベントからコードを探す） |
+
+- Webhook は冪等：`session:` を `SET NX` で先に確保するので、再送・同時重複でもコードは1つ。途中で失敗したら 500 を返し、Stripe の再送で記録が揃う
+- `invoice.paid` が `checkout.session.completed` より先に届いても、`sub:` に期限を保管しておき発行時に使う
+- 照合 API は Origin チェック＋同じ IP から1時間30回まで（`lib/server/guard.ts` の `createRateLimiter`）
+- 特商法ページ `/tokushoho`：`app/tokushoho/page.tsx` 冒頭の定数（事業者名・メール）は**プレースホルダ。実値を入れるまで課金を開始しないこと**
+
 ## 仕様メモ
 - **大きな写真**：Vercel は 4.5MB を超えるリクエストを関数に届く前に弾くため、ブラウザで長辺 1536px に軽く縮めてから送る（lib/client/resize.ts）。最終的な 768px・品質80 への変換はサーバーの sharp が行う
 - **HEIC**：npm 版 sharp の標準ビルドは HEIC（HEVC）を読めない。iPhone は写真選択時に通常 JPEG へ変換され、Safari ではブラウザ側縮小でも JPEG になるので実害は小さい。読めない HEIC が届いた場合は 415 と案内文を返す

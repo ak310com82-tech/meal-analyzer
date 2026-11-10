@@ -12,6 +12,8 @@ import type { MealAnalysis } from "../lib/meal/schema";
 import { HistoryView } from "./HistoryView";
 import { HomeView } from "./HomeView";
 import { SettingsView } from "./SettingsView";
+import { QuotaOver } from "./QuotaOver";
+import { revalidateIfNeeded } from "../lib/client/premium";
 import type { Profile } from "../lib/client/energy";
 import { loadProfile, saveProfile } from "../lib/client/profile";
 import { loadSteps, saveSteps, type StepsByDate } from "../lib/client/steps";
@@ -35,7 +37,6 @@ interface Upload {
   previewUrl: string | null;
 }
 
-const QUOTA_MESSAGE = "今月の無料枠は終わりです。有料プランは準備中です";
 
 export function MealApp() {
   const [tab, setTab] = useState<Tab>("home");
@@ -51,7 +52,13 @@ export function MealApp() {
   const [multipliers, setMultipliers] = useState<PortionMultiplier[]>([]);
   const [eatenPercent, setEatenPercent] = useState<EatenPercent>(100);
   const [recorded, setRecorded] = useState(false);
-  const [quota, setQuota] = useState({ used: 0, limit: FREE_MONTHLY_LIMIT, remaining: FREE_MONTHLY_LIMIT, exhausted: false });
+  const [quota, setQuota] = useState({ used: 0, limit: FREE_MONTHLY_LIMIT, remaining: FREE_MONTHLY_LIMIT, exhausted: false, premium: false });
+  /** 「解除コードをお持ちの方」から設定のプレミアム欄へ移るとき true */
+  const [focusPremium, setFocusPremium] = useState(false);
+  const goPremium = () => {
+    setFocusPremium(true);
+    setTab("settings");
+  };
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [steps, setSteps] = useState<StepsByDate>({});
@@ -64,6 +71,8 @@ export function MealApp() {
     setHistory(loadHistory());
     setProfile(loadProfile());
     setSteps(loadSteps());
+      // プレミアムのコードがあれば、7日ごと／期限切れ時に静かに再照合（失敗時は前回の状態のまま）
+    revalidateIfNeeded().then((changed) => changed && setQuota(getQuota()));
   }, []);
 
   // プレビュー URL の後片付け
@@ -211,6 +220,9 @@ export function MealApp() {
               if (ok) setProfile(p);
               return ok;
             }}
+            focusPremium={focusPremium}
+            onPremiumFocused={() => setFocusPremium(false)}
+            onPremiumChange={() => setQuota(getQuota())}
           />
         ) : tab === "history" ? (
           <HistoryView
@@ -227,7 +239,7 @@ export function MealApp() {
             {!analysis && (
               <section className="card">
                 <div className="quota" data-testid="quota">
-                  今月の無料解析：残り <strong>{quota.remaining}</strong> / {quota.limit} 回
+                  {quota.premium ? "今月の解析（プレミアム）" : "今月の無料解析"}：残り <strong>{quota.remaining}</strong> / {quota.limit} 回
                 </div>
 
                 <div className="seg seg-4 method-seg" role="tablist" aria-label="入力方法">
@@ -250,9 +262,7 @@ export function MealApp() {
                 </div>
 
                 {(method === "photo" || method === "text") && quota.exhausted && (
-                  <p className="quota-over" data-testid="quota-over">
-                    {QUOTA_MESSAGE}
-                  </p>
+                  <QuotaOver premium={quota.premium} onHaveCode={goPremium} />
                 )}
 
                 {method === "photo" && !quota.exhausted && (
@@ -313,6 +323,8 @@ export function MealApp() {
                 {method === "party" && (
                   <PartyMode
                     quotaExhausted={quota.exhausted}
+                    premium={quota.premium}
+                    onHaveCode={goPremium}
                     onRecorded={() => {
                       setHistory(loadHistory());
                       setQuota(getQuota());
