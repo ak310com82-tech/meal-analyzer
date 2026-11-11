@@ -8,7 +8,7 @@ const label = (date: string) => {
 };
 const n = (v: number) => v.toLocaleString("ja-JP");
 
-export function StatsTable({ days, today }: { days: { date: string; stats: DayStats }[]; today: string }) {
+export function StatsTable({ days, today, monthUsers }: { days: { date: string; stats: DayStats; users: number }[]; today: string; monthUsers: number }) {
   const month = today.slice(0, 7);
   const inMonth = days.filter((d) => d.date.startsWith(month));
   const last30 = days.slice(0, 30);
@@ -31,13 +31,14 @@ export function StatsTable({ days, today }: { days: { date: string; stats: DaySt
           <th scope="col">nofood 合計</th>
           <th scope="col">err 合計</th>
           <th scope="col">合計</th>
+          <th scope="col">使った人数（端末数）</th>
         </tr>
       </thead>
       <tbody>
-        {last30.map(({ date, stats }) => {
+        {last30.map(({ date, stats, users }) => {
           const s = summarize(stats);
           return (
-            <tr key={date} className={s.total === 0 ? "zero" : ""}>
+            <tr key={date} className={s.total === 0 && users === 0 ? "zero" : ""}>
               <th scope="row">
                 {label(date)}
                 {date === today && <span className="stats-today">今日</span>}
@@ -47,6 +48,7 @@ export function StatsTable({ days, today }: { days: { date: string; stats: DaySt
               <td>{n(s.nofood)}</td>
               <td className={s.err > 0 ? "warn" : ""}>{n(s.err)}</td>
               <td className="total">{n(s.total)}</td>
+              <td className="users" data-testid="stats-users">{n(users)}</td>
             </tr>
           );
         })}
@@ -61,6 +63,10 @@ export function StatsTable({ days, today }: { days: { date: string; stats: DaySt
           <td>{n(monthSum.nofood)}</td>
           <td>{n(monthSum.err)}</td>
           <td className="total">{n(monthSum.total)}</td>
+          <td className="users" data-testid="stats-month-users">
+            {n(monthUsers)}
+            <sup>※</sup>
+          </td>
         </tr>
       </tfoot>
     </table>

@@ -8,9 +8,28 @@ export type AnalysisResponse =
   | { ok: true; result: MealAnalysis; mock: boolean; promptVersion: string }
   | { ok: false; message: string };
 
+/**
+ * 端末ごとの匿名 ID（/stats の「使った人数（端末数）」を数えるためだけに使う）。
+ * localStorage が使えない環境（プライベートモード等）では null を返し、ID なしで送る。
+ */
+const CLIENT_ID_KEY = "meal-analyzer:client-id:v1";
+function getClientId(): string | null {
+  try {
+    let id = window.localStorage.getItem(CLIENT_ID_KEY);
+    if (!id) {
+      id = crypto.randomUUID();
+      window.localStorage.setItem(CLIENT_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
 async function post(fd: FormData): Promise<AnalysisResponse> {
   try {
-    const res = await fetch("/api/meal-analysis", { method: "POST", body: fd });
+    const clientId = getClientId();
+    const res = await fetch("/api/meal-analysis", { method: "POST", body: fd, headers: clientId ? { "x-client-id": clientId } : undefined });
     const body = (await res.json().catch(() => null)) as (MealAnalysis & { message?: string }) | null;
     if (!res.ok || !body) {
       const fallback =

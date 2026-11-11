@@ -335,3 +335,5 @@ strong { font-weight: 700; }
 .recalc .field-row .btn { min-height: 46px; padding: 0 14px; flex: none; }
 .item-editor { margin-top: 12px; }
 .editor-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.stats-table td.users { font-weight: 700; }
+.stats-table td.users sup { font-size: 9px; color: var(--ink-soft); margin-left: 1px; }

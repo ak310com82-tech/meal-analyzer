@@ -25,6 +25,7 @@ const READ_TIMEOUT_MS = 3000;
 /** 日次キーの保存期間。古い日は自動で消える */
 const KEY_TTL_SEC = 400 * 24 * 60 * 60;
 
+import { createHash } from "node:crypto";
 import { kvConfig, kvPipeline as pipeline, type Env } from "./kv";
 export { kvConfig };
 
@@ -59,6 +60,45 @@ export async function recordAnalysis(mode: StatMode, outcome: StatOutcome, env: 
   }
 }
 
+// ---------------------------------------------------------------------------
+// 使った人数（端末数）：端末ごとの匿名 ID のユニーク数
+//   users:YYYY-MM-DD（日次セット・JST）／ users:YYYY-MM（月次セット・JST）
+//   メンバーは clientId の SHA-256 の先頭32文字。生の ID・IP・User-Agent は保存しない
+// ---------------------------------------------------------------------------
+
+/** UUID 形式（8-4-4-4-12 の英数字とハイフン、36文字）のときだけ人数に数える */
+export const CLIENT_ID_PATTERN = /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i;
+export const usersDayKey = (date: string) => `users:${date}`;
+export const usersMonthKey = (month: string) => `users:${month}`;
+const hashClientId = (id: string) => createHash("sha256").update(id.toLowerCase()).digest("hex").slice(0, 32);
+
+/**
+ * 1 回分の利用者を記録する。KV 未設定・ID が無い／形式違いなら何もしない（回数カウンタとは独立）。
+ * 失敗しても例外を投げず、最長 RECORD_TIMEOUT_MS で必ず戻る。
+ */
+export async function recordUser(clientId: string | null | undefined, env: Env = process.env): Promise<void> {
+  const cfg = kvConfig(env);
+  if (!cfg || !clientId || clientId.length !== 36 || !CLIENT_ID_PATTERN.test(clientId)) return;
+  try {
+    const member = hashClientId(clientId);
+    const day = jstDate();
+    const dayKey = usersDayKey(day);
+    const monthKey = usersMonthKey(day.slice(0, 7));
+    await pipeline(
+      cfg,
+      [
+        ["SADD", dayKey, member],
+        ["EXPIRE", dayKey, KEY_TTL_SEC],
+        ["SADD", monthKey, member],
+        ["EXPIRE", monthKey, KEY_TTL_SEC],
+      ],
+      RECORD_TIMEOUT_MS,
+    );
+  } catch (e) {
+    console.warn(JSON.stringify({ event: "stats_user_record_failed", detail: e instanceof Error ? `${e.name}: ${e.message}` : String(e) }));
+  }
+}
+
 const emptyDay = (): DayStats => ({ photo_ok: 0, photo_nofood: 0, photo_err: 0, text_ok: 0, text_nofood: 0, text_err: 0 });
 
 /** HGETALL の返り値（[field, value, field, value, ...] または object）を DayStats に */
@@ -78,7 +118,7 @@ export function lastDates(n: number, now = Date.now()): string[] {
 }
 
 export type StatsResult =
-  | { status: "ok"; days: { date: string; stats: DayStats }[] }
+  | { status: "ok"; days: { date: string; stats: DayStats; users: number }[]; monthUsers: number }
   | { status: "not_configured" }
   | { status: "error"; message: string };
 
@@ -89,8 +129,19 @@ export async function fetchStats(days = 30, env: Env = process.env, now = Date.n
   const dayOfMonth = Number(jstDate(now).slice(8, 10));
   const dates = lastDates(Math.max(days, dayOfMonth), now);
   try {
-    const results = await pipeline(cfg, dates.map((d) => ["HGETALL", statsKey(d)]), READ_TIMEOUT_MS);
-    return { status: "ok", days: dates.map((date, i) => ({ date, stats: toDayStats(results[i]) })) };
+    // 1 往復で：各日の回数（HGETALL）＋各日の人数（SCARD）＋今月の人数（SCARD）。キーが無い日は 0
+    const month = jstDate(now).slice(0, 7);
+    const results = await pipeline(
+      cfg,
+      [...dates.map((d) => ["HGETALL", statsKey(d)]), ...dates.map((d) => ["SCARD", usersDayKey(d)]), ["SCARD", usersMonthKey(month)]],
+      READ_TIMEOUT_MS,
+    );
+    const n = dates.length;
+    return {
+      status: "ok",
+      days: dates.map((date, i) => ({ date, stats: toDayStats(results[i]), users: Number(results[n + i]) || 0 })),
+      monthUsers: Number(results[2 * n]) || 0,
+    };
   } catch (e) {
     return { status: "error", message: e instanceof Error ? e.message : String(e) };
   }

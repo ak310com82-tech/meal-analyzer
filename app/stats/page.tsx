@@ -35,7 +35,14 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
       </p>
       {res.status === "not_configured" && <p className="error">KV が未設定です（KV_REST_API_URL / KV_REST_API_TOKEN）。Vercel の Storage で KV を作成し、このプロジェクトに接続してください。</p>}
       {res.status === "error" && <p className="error">集計を読み込めませんでした：{res.message}</p>}
-      {res.status === "ok" && <StatsTable days={res.days} today={today} />}
+      {res.status === "ok" && (
+        <>
+          <StatsTable days={res.days} today={today} monthUsers={res.monthUsers} />
+          <p className="muted small" data-testid="stats-users-note">
+            ※ 使った人数は、端末ごとの匿名IDのユニーク数（端末数の近似）です。同じ人でも端末やブラウザが違えば別に数え、ブラウザのデータを消すと新しい人として数えます。プライベートモードなど ID を保存できない環境や、画面以外からの呼び出しは数えません。今月の合計行の人数は、日ごとの人数の合計ではなく「今月1回以上使った端末の数」です。人数の集計を始める前の日は 0 になります。
+          </p>
+        </>
+      )}
       <p className="muted small">更新：{new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}</p>
     </main>
   );

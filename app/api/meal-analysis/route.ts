@@ -19,7 +19,7 @@ import { UpstreamError } from "../../../lib/meal/gemini";
 import { UnsupportedImageError } from "../../../lib/meal/preprocess";
 import { checkOrigin, clientIp, takeRateLimit } from "../../../lib/server/guard";
 import { DISH_HINT_MAX } from "../../../lib/meal/prompt";
-import { recordAnalysis, type StatOutcome } from "../../../lib/server/stats";
+import { recordAnalysis, recordUser, type StatOutcome } from "../../../lib/server/stats";
 
 export const runtime = "nodejs"; // sharp を使うため
 export const dynamic = "force-dynamic";
@@ -59,6 +59,8 @@ export async function POST(req: Request): Promise<Response> {
     return err(400, "bad_request", "画像を受け取れませんでした。もう一度お試しください。");
   }
   const apiKey = process.env.GEMINI_API_KEY?.trim() || undefined;
+  /** 端末ごとの匿名 ID（人数の集計用。検証は lib/server/stats.ts の recordUser） */
+  const clientId = req.headers.get("x-client-id");
 
   // ---- テキストモード ----
   const textField = form.get("text");
@@ -66,7 +68,7 @@ export async function POST(req: Request): Promise<Response> {
     const text = textField.trim();
     if (!text) return err(400, "no_text", "食べたものを入力してください。");
     if ([...text].length > MAX_TEXT_LENGTH) return err(400, "text_too_long", `食べたものは${MAX_TEXT_LENGTH}文字以内で入力してください。`);
-    return respond(() => analyzeMealText(text, { apiKey }), { kind: "text", mock: !apiKey });
+    return respond(() => analyzeMealText(text, { apiKey }), { kind: "text", mock: !apiKey, clientId });
   }
 
   // ---- 写真モード ----
@@ -91,19 +93,21 @@ export async function POST(req: Request): Promise<Response> {
   const correction = form.get("correction") === "1";
 
   const buf = Buffer.from(await file.arrayBuffer());
-  return respond(() => analyzeMealImage(buf, { apiKey, fileName, dishHint: dishHint || undefined, correction }), { kind: "photo", mock: !apiKey, isHeic: isHeicByName || type.includes("hei"), fileName, type });
+  return respond(() => analyzeMealImage(buf, { apiKey, fileName, dishHint: dishHint || undefined, correction }), { kind: "photo", mock: !apiKey, clientId, isHeic: isHeicByName || type.includes("hei"), fileName, type });
 }
 
 /** 解析を実行してレスポンスに変換する（写真・テキスト共通のエラー処理） */
 async function respond(
   run: () => Promise<AnalyzeOutput>,
-  ctx: ({ kind: "photo"; isHeic: boolean; fileName: string; type: string } | { kind: "text" }) & { mock: boolean },
+  ctx: ({ kind: "photo"; isHeic: boolean; fileName: string; type: string } | { kind: "text" }) & { mock: boolean; clientId: string | null },
 ): Promise<Response> {
   /**
    * 日次カウンタ（lib/server/stats.ts）。Gemini への実呼び出しの結果が確定したときだけ数える（モックは数えない）。
    * recordAnalysis は例外を投げず、最長 500ms で必ず戻るので、解析レスポンスには影響しない。
    */
-  const count = (outcome: StatOutcome) => (ctx.mock ? Promise.resolve() : recordAnalysis(ctx.kind, outcome));
+  // 使った人数（端末数）も同じタイミングで記録（x-client-id。形式違い・欠落は人数に数えないだけ）。並列で待つので遅れは増えない
+  const count = (outcome: StatOutcome) =>
+    ctx.mock ? Promise.resolve() : Promise.all([recordAnalysis(ctx.kind, outcome), recordUser(ctx.clientId)]).then(() => undefined);
   try {
     const out = await run();
     await count(out.result.items.length > 0 ? "ok" : "nofood");
