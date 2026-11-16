@@ -13,20 +13,25 @@ import {
 } from "../lib/client/energy";
 import { groupByDay, type HistoryEntry } from "../lib/client/history";
 import type { StepsByDate } from "../lib/client/steps";
+import type { WeightEntry } from "../lib/client/weight";
 import { localDateKey } from "../lib/client/storage";
+import { WeightHomeCard } from "./WeightSection";
 
 interface Props {
   profile: Profile | null;
   history: HistoryEntry[];
   steps: StepsByDate;
   onSaveSteps: (date: string, steps: number | null) => void;
+  weights: WeightEntry[];
+  /** 体重の保存（体重タブと共用）。保存できたら true */
+  onSaveWeight: (date: string, kg: number) => boolean;
   goSettings: () => void;
   goAnalyze: () => void;
 }
 
 const fmt = (n: number) => Math.round(n).toLocaleString("ja-JP");
 
-export function HomeView({ profile, history, steps, onSaveSteps, goSettings, goAnalyze }: Props) {
+export function HomeView({ profile, history, steps, onSaveSteps, weights, onSaveWeight, goSettings, goAnalyze }: Props) {
   const now = new Date();
   const today = localDateKey(now);
   const days = groupByDay(history);
@@ -108,6 +113,9 @@ export function HomeView({ profile, history, steps, onSaveSteps, goSettings, goA
         )}
         <p className="muted small">※ 今は手入力のみです（スマホの歩数アプリとの自動連携はできません）</p>
       </section>
+
+      {/* 体重（クイック入力。推移は体重タブ） */}
+      <WeightHomeCard weights={weights} onSave={onSaveWeight} />
 
       {/* このままいくと */}
       <section className="card" data-testid="forecast-card">

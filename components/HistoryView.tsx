@@ -50,7 +50,7 @@ export function HistoryView({ history, onDelete, onMemo, onEditItems }: Props) {
             </div>
           </div>
           <div className="day-pfc">
-            P {g.totals.protein_g}g ・ F {g.totals.fat_g}g ・ C {g.totals.carbs_g}g
+            P {g.totals.protein_g}g ・ F {g.totals.fat_g}g ・ C {g.totals.carbs_g}g ・ <span data-testid="day-count">{g.entries.length}件</span>
           </div>
           <ul className="entries">
             {g.entries.map((e) => {

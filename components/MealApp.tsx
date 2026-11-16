@@ -18,9 +18,11 @@ import { revalidateIfNeeded } from "../lib/client/premium";
 import type { Profile } from "../lib/client/energy";
 import { loadProfile, saveProfile } from "../lib/client/profile";
 import { loadSteps, saveSteps, type StepsByDate } from "../lib/client/steps";
+import { loadWeights, removeWeight, saveWeight, type WeightEntry } from "../lib/client/weight";
 import { ResultView } from "./ResultView";
+import { WeightView } from "./WeightSection";
 
-type Tab = "home" | "analyze" | "history" | "settings";
+type Tab = "home" | "analyze" | "history" | "weight" | "settings";
 type Status = "idle" | "preparing" | "ready" | "analyzing" | "done" | "error";
 type Method = "photo" | "text" | "manual" | "party";
 
@@ -71,6 +73,7 @@ export function MealApp() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [steps, setSteps] = useState<StepsByDate>({});
+  const [weights, setWeights] = useState<WeightEntry[]>([]);
   const cameraRef = useRef<HTMLInputElement>(null);
   const libraryRef = useRef<HTMLInputElement>(null);
 
@@ -80,6 +83,7 @@ export function MealApp() {
     setHistory(loadHistory());
     setProfile(loadProfile());
     setSteps(loadSteps());
+    setWeights(loadWeights());
       // プレミアムのコードがあれば、7日ごと／期限切れ時に静かに再照合（失敗時は前回の状態のまま）
     revalidateIfNeeded().then((changed) => changed && setQuota(getQuota()));
   }, []);
@@ -211,6 +215,14 @@ export function MealApp() {
     setHistory(loadHistory());
   }
 
+  /** 体重の保存（ホームのクイック入力・体重タブで共用。同日は上書き） */
+  function handleSaveWeight(date: string, kg: number): boolean {
+    const next = saveWeight(date, kg);
+    if (!next) return false;
+    setWeights(next);
+    return true;
+  }
+
   const busy = status === "preparing" || status === "analyzing";
 
   return (
@@ -242,6 +254,7 @@ export function MealApp() {
             ["home", "ホーム", "tab-home"],
             ["analyze", "解析", "tab-analyze"],
             ["history", "履歴", "tab-history"],
+            ["weight", "体重", "tab-weight"],
             ["settings", "設定", "tab-settings"],
           ] as const
         ).map(([key, label, testId]) => (
@@ -258,6 +271,8 @@ export function MealApp() {
             history={history}
             steps={steps}
             onSaveSteps={(date, v) => setSteps(saveSteps(date, v))}
+            weights={weights}
+            onSaveWeight={handleSaveWeight}
             goSettings={() => setTab("settings")}
             goAnalyze={() => setTab("analyze")}
           />
@@ -273,6 +288,8 @@ export function MealApp() {
             onPremiumFocused={() => setFocusPremium(false)}
             onPremiumChange={() => setQuota(getQuota())}
           />
+        ) : tab === "weight" ? (
+          <WeightView weights={weights} onSave={handleSaveWeight} onRemove={(date) => setWeights(removeWeight(date))} />
         ) : tab === "history" ? (
           <HistoryView
             history={history}
