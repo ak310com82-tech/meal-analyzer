@@ -30,19 +30,39 @@ interface SaveProps {
   onSave: (date: string, kg: number) => boolean;
 }
 
-/** 今日の体重の入力行（ホーム・体重タブで共用。同日は上書き） */
-function WeightInputRow({ weights, onSave }: SaveProps) {
+/** 体重の入力行（ホーム・体重タブで共用。同日は上書き）。withDate のときは過去の日付も選べる */
+function WeightInputRow({ weights, onSave, withDate = false }: SaveProps & { withDate?: boolean }) {
   const today = localDateKey(new Date());
-  const todayKg = weights.find((w) => w.date === today)?.kg ?? null;
-  const [text, setText] = useState(todayKg != null ? String(todayKg) : "");
+  const [date, setDate] = useState(today);
+  const selectedKg = weights.find((w) => w.date === date)?.kg ?? null;
+  const [text, setText] = useState(selectedKg != null ? String(selectedKg) : "");
   const [state, setState] = useState<"idle" | "saved" | "error">("idle");
-  useEffect(() => setText(todayKg != null ? String(todayKg) : ""), [todayKg]);
+  useEffect(() => setText(selectedKg != null ? String(selectedKg) : ""), [selectedKg]);
 
   const n = text.trim() === "" ? null : Number(text);
   const valid = n != null && isValidWeight(n);
+  const isToday = date === today;
 
   return (
     <div>
+      {withDate && (
+        <div className="steps-row">
+          <input
+            className="num-input"
+            type="date"
+            value={date}
+            max={today}
+            onChange={(e) => {
+              if (e.target.value) {
+                setDate(e.target.value);
+                setState("idle");
+              }
+            }}
+            aria-label="記録する日付"
+            data-testid="weight-date"
+          />
+        </div>
+      )}
       <div className="steps-row">
         <input
           className="num-input"
@@ -57,7 +77,7 @@ function WeightInputRow({ weights, onSave }: SaveProps) {
             setText(e.target.value);
             setState("idle");
           }}
-          aria-label="今日の体重"
+          aria-label={isToday ? "今日の体重" : "体重"}
           data-testid="weight-input"
         />
         <span className="steps-unit">kg</span>
@@ -66,7 +86,7 @@ function WeightInputRow({ weights, onSave }: SaveProps) {
           disabled={!valid}
           onClick={() => {
             if (n == null) return;
-            setState(onSave(today, n) ? "saved" : "error");
+            setState(onSave(date, n) ? "saved" : "error");
           }}
           data-testid="weight-save"
         >
@@ -80,7 +100,7 @@ function WeightInputRow({ weights, onSave }: SaveProps) {
       )}
       {state === "saved" && (
         <p className="ok-msg small" data-testid="weight-saved">
-          今日の体重を記録しました
+          {isToday ? "今日の体重を記録しました" : `${dateLabel(date)}の体重を記録しました`}
         </p>
       )}
       {state === "error" && <p className="error small">保存できませんでした（ブラウザの保存領域が使えない設定かもしれません）。</p>}
@@ -125,7 +145,7 @@ export function WeightView({ weights, onSave, onRemove }: SaveProps & { onRemove
   return (
     <section className="card" data-testid="weight-card">
       <h2 className="card-title">体重</h2>
-      <WeightInputRow weights={weights} onSave={onSave} />
+      <WeightInputRow weights={weights} onSave={onSave} withDate />
       <LatestLine weights={weights} />
       {weights.length >= 2 ? (
         <WeightChart weights={weights} />
