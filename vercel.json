@@ -1,8 +1,8 @@
 {
+  "ignoreCommand": "exit 0",
   "git": {
     "deploymentEnabled": {
       "odds-data": false
     }
-  },
-  "ignoreCommand": "exit 0"
+  }
 }
