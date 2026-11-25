@@ -15,10 +15,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命80%、鉄板級。買うつもりで予定。"
+   "reason": "本命82%、鉄板級、買い目全体のEV平均1.4と妙味あり、展示の足色も本命が上位。"
   },
   {
    "venue": 10,
@@ -365,7 +365,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "本日は買うつもりのレースがなく、勝負なし。",
+ "comment": "",
  "notes": [],
- "updated": "2026-11-26T07:34:13+09:00"
+ "updated": "2026-11-26T08:34:14+09:00"
 }
