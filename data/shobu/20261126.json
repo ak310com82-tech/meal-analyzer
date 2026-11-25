@@ -48,12 +48,12 @@
    ],
    "points": 2,
    "unit": 300,
-   "stake": 600,
+   "stake": 0,
    "mode": "通常",
-   "status": "planned",
-   "payout": null,
+   "status": "passed",
+   "payout": 0,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命71%、鉄板級。買うつもりで予定。"
+   "reason": "締切前のオッズで買い目がEV割れし、買える目がなくなったため見送り。"
   },
   {
    "venue": 18,
@@ -366,5 +366,5 @@
  "pl": null,
  "comment": "",
  "notes": [],
- "updated": "2026-11-26T08:44:15+09:00"
+ "updated": "2026-11-26T08:54:14+09:00"
 }
