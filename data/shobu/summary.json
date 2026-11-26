@@ -1,6 +1,15 @@
 {
- "days": [],
- "totalPl": 0,
- "dayCount": 0,
- "plusDays": 0
+ "days": [
+  {
+   "date": "2026-11-26",
+   "pl": 100,
+   "finalBalance": 10100,
+   "stakeTotal": 20550,
+   "payoutTotal": 20650,
+   "betCount": 20
+  }
+ ],
+ "totalPl": 100,
+ "dayCount": 1,
+ "plusDays": 1
 }
