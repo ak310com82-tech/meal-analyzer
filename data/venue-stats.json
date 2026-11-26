@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-25T21:11:47+09:00",
+ "updated": "2026-11-26T21:11:50+09:00",
  "from": "2026-10-01",
- "to": "2026-11-24",
+ "to": "2026-11-25",
  "venues": {
   "1": {
    "races": 313,
@@ -324,82 +324,82 @@
    }
   },
   "5": {
-   "races": 232,
-   "hits": 38,
-   "hitRate": 16.4,
-   "roi": 103.6,
+   "races": 244,
+   "hits": 41,
+   "hitRate": 16.8,
+   "roi": 107.1,
    "byRace": {
     "1": {
+     "races": 22,
+     "hits": 3,
+     "hitRate": 13.6,
+     "roi": 156.9
+    },
+    "2": {
+     "races": 22,
+     "hits": 4,
+     "hitRate": 18.2,
+     "roi": 118.2
+    },
+    "3": {
+     "races": 21,
+     "hits": 5,
+     "hitRate": 23.8,
+     "roi": 96.3
+    },
+    "4": {
+     "races": 23,
+     "hits": 5,
+     "hitRate": 21.7,
+     "roi": 80.0
+    },
+    "5": {
      "races": 21,
      "hits": 2,
      "hitRate": 9.5,
-     "roi": 130.9
-    },
-    "2": {
-     "races": 21,
-     "hits": 3,
-     "hitRate": 14.3,
-     "roi": 89.4
-    },
-    "3": {
-     "races": 20,
-     "hits": 5,
-     "hitRate": 25.0,
-     "roi": 98.6
-    },
-    "4": {
-     "races": 22,
-     "hits": 5,
-     "hitRate": 22.7,
-     "roi": 84.4
-    },
-    "5": {
-     "races": 20,
-     "hits": 2,
-     "hitRate": 10.0,
-     "roi": 30.8
+     "roi": 30.0
     },
     "6": {
-     "races": 21,
+     "races": 22,
      "hits": 4,
-     "hitRate": 19.0,
-     "roi": 79.0
+     "hitRate": 18.2,
+     "roi": 74.5
     },
     "7": {
-     "races": 19,
+     "races": 20,
      "hits": 1,
-     "hitRate": 5.3,
-     "roi": 19.0
+     "hitRate": 5.0,
+     "roi": 18.6
     },
     "8": {
-     "races": 19,
-     "hits": 4,
-     "hitRate": 21.1,
-     "roi": 270.2
-    },
-    "9": {
      "races": 20,
      "hits": 4,
      "hitRate": 20.0,
-     "roi": 77.4
+     "roi": 247.2
+    },
+    "9": {
+     "races": 21,
+     "hits": 4,
+     "hitRate": 19.0,
+     "roi": 75.0
     },
     "10": {
-     "races": 16,
-     "hits": 3,
-     "hitRate": 18.8,
-     "roi": 83.3
+     "races": 17,
+     "hits": 4,
+     "hitRate": 23.5,
+     "roi": 103.2
     },
     "11": {
-     "races": 15,
+     "races": 16,
      "hits": 2,
-     "hitRate": 13.3,
-     "roi": 407.6
+     "hitRate": 12.5,
+     "roi": 391.9
     },
     "12": {
-     "races": 18,
+     "races": 19,
      "hits": 3,
-     "hitRate": 16.7,
-     "roi": 117.6
+     "hitRate": 15.8,
+     "roi": 114.5
     }
    }
   },
@@ -564,82 +564,82 @@
    }
   },
   "8": {
-   "races": 328,
-   "hits": 48,
-   "hitRate": 14.6,
-   "roi": 74.7,
+   "races": 340,
+   "hits": 49,
+   "hitRate": 14.4,
+   "roi": 74.5,
    "byRace": {
     "1": {
-     "races": 26,
-     "hits": 5,
-     "hitRate": 19.2,
-     "roi": 176.0
-    },
-    "2": {
-     "races": 29,
-     "hits": 5,
-     "hitRate": 17.2,
-     "roi": 48.9
-    },
-    "3": {
-     "races": 30,
-     "hits": 4,
-     "hitRate": 13.3,
-     "roi": 38.5
-    },
-    "4": {
-     "races": 28,
-     "hits": 1,
-     "hitRate": 3.6,
-     "roi": 8.8
-    },
-    "5": {
-     "races": 28,
-     "hits": 1,
-     "hitRate": 3.6,
-     "roi": 19.8
-    },
-    "6": {
-     "races": 25,
-     "hits": 10,
-     "hitRate": 40.0,
-     "roi": 257.4
-    },
-    "7": {
-     "races": 29,
-     "hits": 4,
-     "hitRate": 13.8,
-     "roi": 63.9
-    },
-    "8": {
-     "races": 28,
-     "hits": 5,
-     "hitRate": 17.9,
-     "roi": 112.5
-    },
-    "9": {
-     "races": 29,
-     "hits": 1,
-     "hitRate": 3.4,
-     "roi": 17.6
-    },
-    "10": {
      "races": 27,
      "hits": 5,
      "hitRate": 18.5,
-     "roi": 158.2
+     "roi": 168.2
+    },
+    "2": {
+     "races": 30,
+     "hits": 6,
+     "hitRate": 20.0,
+     "roi": 64.8
+    },
+    "3": {
+     "races": 31,
+     "hits": 4,
+     "hitRate": 12.9,
+     "roi": 37.5
+    },
+    "4": {
+     "races": 29,
+     "hits": 1,
+     "hitRate": 3.4,
+     "roi": 8.6
+    },
+    "5": {
+     "races": 29,
+     "hits": 1,
+     "hitRate": 3.4,
+     "roi": 19.3
+    },
+    "6": {
+     "races": 26,
+     "hits": 10,
+     "hitRate": 38.5,
+     "roi": 248.6
+    },
+    "7": {
+     "races": 30,
+     "hits": 4,
+     "hitRate": 13.3,
+     "roi": 62.5
+    },
+    "8": {
+     "races": 29,
+     "hits": 5,
+     "hitRate": 17.2,
+     "roi": 111.4
+    },
+    "9": {
+     "races": 30,
+     "hits": 1,
+     "hitRate": 3.3,
+     "roi": 17.4
+    },
+    "10": {
+     "races": 28,
+     "hits": 5,
+     "hitRate": 17.9,
+     "roi": 152.9
     },
     "11": {
-     "races": 26,
+     "races": 27,
      "hits": 3,
-     "hitRate": 11.5,
-     "roi": 54.1
+     "hitRate": 11.1,
+     "roi": 52.1
     },
     "12": {
-     "races": 23,
+     "races": 24,
      "hits": 4,
-     "hitRate": 17.4,
-     "roi": 108.9
+     "hitRate": 16.7,
+     "roi": 98.0
     }
    }
   },
@@ -724,70 +724,70 @@
    }
   },
   "10": {
-   "races": 350,
-   "hits": 50,
-   "hitRate": 14.3,
-   "roi": 71.3,
+   "races": 361,
+   "hits": 52,
+   "hitRate": 14.4,
+   "roi": 72.3,
    "byRace": {
     "1": {
-     "races": 28,
-     "hits": 2,
-     "hitRate": 7.1,
-     "roi": 20.2
-    },
-    "2": {
-     "races": 29,
-     "hits": 4,
-     "hitRate": 13.8,
-     "roi": 41.6
-    },
-    "3": {
-     "races": 29,
-     "hits": 4,
-     "hitRate": 13.8,
-     "roi": 65.8
-    },
-    "4": {
-     "races": 31,
-     "hits": 3,
-     "hitRate": 9.7,
-     "roi": 86.2
-    },
-    "5": {
-     "races": 30,
-     "hits": 3,
-     "hitRate": 10.0,
-     "roi": 24.8
-    },
-    "6": {
-     "races": 31,
-     "hits": 8,
-     "hitRate": 25.8,
-     "roi": 107.4
-    },
-    "7": {
      "races": 29,
      "hits": 3,
      "hitRate": 10.3,
-     "roi": 46.5
+     "roi": 46.7
+    },
+    "2": {
+     "races": 30,
+     "hits": 4,
+     "hitRate": 13.3,
+     "roi": 39.7
+    },
+    "3": {
+     "races": 30,
+     "hits": 4,
+     "hitRate": 13.3,
+     "roi": 64.9
+    },
+    "4": {
+     "races": 32,
+     "hits": 3,
+     "hitRate": 9.4,
+     "roi": 82.8
+    },
+    "5": {
+     "races": 31,
+     "hits": 3,
+     "hitRate": 9.7,
+     "roi": 24.0
+    },
+    "6": {
+     "races": 32,
+     "hits": 8,
+     "hitRate": 25.0,
+     "roi": 105.6
+    },
+    "7": {
+     "races": 30,
+     "hits": 3,
+     "hitRate": 10.0,
+     "roi": 45.7
     },
     "8": {
-     "races": 28,
-     "hits": 9,
-     "hitRate": 32.1,
-     "roi": 130.7
+     "races": 29,
+     "hits": 10,
+     "hitRate": 34.5,
+     "roi": 140.3
     },
     "9": {
-     "races": 31,
+     "races": 32,
      "hits": 5,
-     "hitRate": 16.1,
-     "roi": 116.3
+     "hitRate": 15.6,
+     "roi": 114.1
     },
     "10": {
-     "races": 29,
+     "races": 30,
      "hits": 5,
-     "hitRate": 17.2,
-     "roi": 89.1
+     "hitRate": 16.7,
+     "roi": 87.2
     },
     "11": {
      "races": 29,
@@ -796,220 +796,220 @@
      "roi": 16.9
     },
     "12": {
-     "races": 26,
+     "races": 27,
      "hits": 2,
-     "hitRate": 7.7,
-     "roi": 40.6
+     "hitRate": 7.4,
+     "roi": 39.0
     }
    }
   },
   "11": {
-   "races": 336,
-   "hits": 48,
-   "hitRate": 14.3,
-   "roi": 97.4,
+   "races": 348,
+   "hits": 50,
+   "hitRate": 14.4,
+   "roi": 99.4,
    "byRace": {
     "1": {
-     "races": 29,
+     "races": 30,
      "hits": 4,
-     "hitRate": 13.8,
-     "roi": 95.0
+     "hitRate": 13.3,
+     "roi": 89.1
     },
     "2": {
-     "races": 30,
+     "races": 31,
      "hits": 7,
-     "hitRate": 23.3,
-     "roi": 201.5
+     "hitRate": 22.6,
+     "roi": 195.9
     },
     "3": {
-     "races": 29,
+     "races": 30,
      "hits": 6,
-     "hitRate": 20.7,
-     "roi": 76.9
+     "hitRate": 20.0,
+     "roi": 73.6
     },
     "4": {
-     "races": 28,
-     "hits": 5,
-     "hitRate": 17.9,
-     "roi": 96.4
-    },
-    "5": {
-     "races": 25,
-     "hits": 3,
-     "hitRate": 12.0,
-     "roi": 46.5
-    },
-    "6": {
-     "races": 30,
-     "hits": 5,
-     "hitRate": 16.7,
-     "roi": 202.7
-    },
-    "7": {
      "races": 29,
-     "hits": 2,
-     "hitRate": 6.9,
-     "roi": 35.5
-    },
-    "8": {
-     "races": 27,
      "hits": 5,
-     "hitRate": 18.5,
-     "roi": 102.6
-    },
-    "9": {
-     "races": 28,
-     "hits": 5,
-     "hitRate": 17.9,
-     "roi": 63.9
-    },
-    "10": {
-     "races": 30,
-     "hits": 3,
-     "hitRate": 10.0,
-     "roi": 45.0
-    },
-    "11": {
-     "races": 26,
-     "hits": 1,
-     "hitRate": 3.8,
-     "roi": 20.6
-    },
-    "12": {
-     "races": 25,
-     "hits": 2,
-     "hitRate": 8.0,
-     "roi": 93.4
-    }
-   }
-  },
-  "12": {
-   "races": 304,
-   "hits": 45,
-   "hitRate": 14.8,
-   "roi": 80.6,
-   "byRace": {
-    "1": {
-     "races": 24,
-     "hits": 2,
-     "hitRate": 8.3,
-     "roi": 75.2
-    },
-    "2": {
-     "races": 28,
-     "hits": 3,
-     "hitRate": 10.7,
-     "roi": 44.0
-    },
-    "3": {
-     "races": 27,
-     "hits": 6,
-     "hitRate": 22.2,
-     "roi": 76.5
-    },
-    "4": {
-     "races": 28,
-     "hits": 6,
-     "hitRate": 21.4,
-     "roi": 139.2
+     "hitRate": 17.2,
+     "roi": 91.6
     },
     "5": {
      "races": 26,
      "hits": 3,
      "hitRate": 11.5,
-     "roi": 64.9
+     "roi": 45.7
     },
     "6": {
-     "races": 25,
-     "hits": 3,
-     "hitRate": 12.0,
-     "roi": 31.6
+     "races": 31,
+     "hits": 6,
+     "hitRate": 19.4,
+     "roi": 216.5
     },
     "7": {
+     "races": 30,
+     "hits": 2,
+     "hitRate": 6.7,
+     "roi": 33.8
+    },
+    "8": {
+     "races": 28,
+     "hits": 6,
+     "hitRate": 21.4,
+     "roi": 140.1
+    },
+    "9": {
+     "races": 29,
+     "hits": 5,
+     "hitRate": 17.2,
+     "roi": 62.3
+    },
+    "10": {
+     "races": 31,
+     "hits": 3,
+     "hitRate": 9.7,
+     "roi": 42.9
+    },
+    "11": {
      "races": 27,
+     "hits": 1,
+     "hitRate": 3.7,
+     "roi": 19.8
+    },
+    "12": {
+     "races": 26,
+     "hits": 2,
+     "hitRate": 7.7,
+     "roi": 89.8
+    }
+   }
+  },
+  "12": {
+   "races": 316,
+   "hits": 45,
+   "hitRate": 14.2,
+   "roi": 78.2,
+   "byRace": {
+    "1": {
+     "races": 25,
+     "hits": 2,
+     "hitRate": 8.0,
+     "roi": 73.6
+    },
+    "2": {
+     "races": 29,
+     "hits": 3,
+     "hitRate": 10.3,
+     "roi": 43.1
+    },
+    "3": {
+     "races": 28,
+     "hits": 6,
+     "hitRate": 21.4,
+     "roi": 73.9
+    },
+    "4": {
+     "races": 29,
+     "hits": 6,
+     "hitRate": 20.7,
+     "roi": 136.3
+    },
+    "5": {
+     "races": 27,
+     "hits": 3,
+     "hitRate": 11.1,
+     "roi": 62.8
+    },
+    "6": {
+     "races": 26,
+     "hits": 3,
+     "hitRate": 11.5,
+     "roi": 30.4
+    },
+    "7": {
+     "races": 28,
      "hits": 0,
      "hitRate": 0.0,
      "roi": 0.0
     },
     "8": {
-     "races": 27,
+     "races": 28,
      "hits": 5,
-     "hitRate": 18.5,
-     "roi": 115.3
+     "hitRate": 17.9,
+     "roi": 110.8
     },
     "9": {
-     "races": 24,
+     "races": 25,
      "hits": 4,
-     "hitRate": 16.7,
-     "roi": 114.2
+     "hitRate": 16.0,
+     "roi": 110.0
     },
     "10": {
-     "races": 24,
+     "races": 25,
      "hits": 6,
-     "hitRate": 25.0,
-     "roi": 188.9
+     "hitRate": 24.0,
+     "roi": 180.7
     },
     "11": {
-     "races": 24,
+     "races": 25,
      "hits": 2,
-     "hitRate": 8.3,
-     "roi": 39.6
+     "hitRate": 8.0,
+     "roi": 38.7
     },
     "12": {
-     "races": 20,
+     "races": 21,
      "hits": 5,
-     "hitRate": 25.0,
-     "roi": 197.3
+     "hitRate": 23.8,
+     "roi": 186.0
     }
    }
   },
   "13": {
-   "races": 363,
+   "races": 374,
    "hits": 67,
-   "hitRate": 18.5,
-   "roi": 83.9,
+   "hitRate": 17.9,
+   "roi": 82.2,
    "byRace": {
     "1": {
-     "races": 32,
+     "races": 33,
      "hits": 7,
-     "hitRate": 21.9,
-     "roi": 123.4
+     "hitRate": 21.2,
+     "roi": 118.5
     },
     "2": {
-     "races": 30,
+     "races": 31,
      "hits": 4,
-     "hitRate": 13.3,
-     "roi": 38.7
+     "hitRate": 12.9,
+     "roi": 38.3
     },
     "3": {
-     "races": 32,
+     "races": 33,
      "hits": 6,
-     "hitRate": 18.8,
-     "roi": 92.2
+     "hitRate": 18.2,
+     "roi": 89.9
     },
     "4": {
-     "races": 32,
+     "races": 33,
      "hits": 6,
-     "hitRate": 18.8,
-     "roi": 52.2
+     "hitRate": 18.2,
+     "roi": 51.7
     },
     "5": {
-     "races": 30,
+     "races": 31,
      "hits": 6,
-     "hitRate": 20.0,
-     "roi": 56.9
+     "hitRate": 19.4,
+     "roi": 56.2
     },
     "6": {
-     "races": 27,
+     "races": 28,
      "hits": 4,
-     "hitRate": 14.8,
-     "roi": 48.4
+     "hitRate": 14.3,
+     "roi": 47.5
     },
     "7": {
-     "races": 29,
+     "races": 30,
      "hits": 9,
-     "hitRate": 31.0,
-     "roi": 112.4
+     "hitRate": 30.0,
+     "roi": 111.1
     },
     "8": {
      "races": 32,
@@ -1018,28 +1018,28 @@
      "roi": 161.2
     },
     "9": {
-     "races": 30,
+     "races": 31,
      "hits": 3,
-     "hitRate": 10.0,
-     "roi": 71.0
+     "hitRate": 9.7,
+     "roi": 69.3
     },
     "10": {
-     "races": 30,
+     "races": 31,
      "hits": 6,
-     "hitRate": 20.0,
-     "roi": 92.9
+     "hitRate": 19.4,
+     "roi": 89.4
     },
     "11": {
-     "races": 28,
+     "races": 29,
      "hits": 4,
-     "hitRate": 14.3,
-     "roi": 45.9
+     "hitRate": 13.8,
+     "roi": 44.3
     },
     "12": {
-     "races": 31,
+     "races": 32,
      "hits": 5,
-     "hitRate": 16.1,
-     "roi": 91.3
+     "hitRate": 15.6,
+     "roi": 89.8
     }
    }
   },
@@ -1124,82 +1124,82 @@
    }
   },
   "15": {
-   "races": 257,
-   "hits": 32,
-   "hitRate": 12.5,
-   "roi": 66.1,
+   "races": 269,
+   "hits": 36,
+   "hitRate": 13.4,
+   "roi": 76.7,
    "byRace": {
     "1": {
-     "races": 23,
-     "hits": 3,
-     "hitRate": 13.0,
-     "roi": 106.3
+     "races": 24,
+     "hits": 4,
+     "hitRate": 16.7,
+     "roi": 129.6
     },
     "2": {
-     "races": 25,
-     "hits": 3,
-     "hitRate": 12.0,
-     "roi": 43.3
+     "races": 26,
+     "hits": 4,
+     "hitRate": 15.4,
+     "roi": 88.4
     },
     "3": {
-     "races": 23,
-     "hits": 2,
-     "hitRate": 8.7,
-     "roi": 67.6
+     "races": 24,
+     "hits": 3,
+     "hitRate": 12.5,
+     "roi": 97.3
     },
     "4": {
-     "races": 22,
-     "hits": 3,
-     "hitRate": 13.6,
-     "roi": 55.5
-    },
-    "5": {
-     "races": 23,
-     "hits": 1,
-     "hitRate": 4.3,
-     "roi": 23.0
-    },
-    "6": {
      "races": 23,
      "hits": 3,
      "hitRate": 13.0,
-     "roi": 51.1
+     "roi": 53.0
+    },
+    "5": {
+     "races": 24,
+     "hits": 2,
+     "hitRate": 8.3,
+     "roi": 34.1
+    },
+    "6": {
+     "races": 24,
+     "hits": 3,
+     "hitRate": 12.5,
+     "roi": 48.0
     },
     "7": {
-     "races": 22,
+     "races": 23,
      "hits": 3,
-     "hitRate": 13.6,
-     "roi": 78.0
+     "hitRate": 13.0,
+     "roi": 74.6
     },
     "8": {
-     "races": 18,
+     "races": 19,
      "hits": 1,
-     "hitRate": 5.6,
-     "roi": 24.3
+     "hitRate": 5.3,
+     "roi": 23.2
     },
     "9": {
-     "races": 20,
+     "races": 21,
      "hits": 4,
-     "hitRate": 20.0,
-     "roi": 83.1
+     "hitRate": 19.0,
+     "roi": 80.8
     },
     "10": {
-     "races": 19,
+     "races": 20,
      "hits": 5,
-     "hitRate": 26.3,
-     "roi": 207.1
+     "hitRate": 25.0,
+     "roi": 196.8
     },
     "11": {
-     "races": 18,
+     "races": 19,
      "hits": 3,
-     "hitRate": 16.7,
-     "roi": 81.7
+     "hitRate": 15.8,
+     "roi": 80.0
     },
     "12": {
-     "races": 21,
+     "races": 22,
      "hits": 1,
-     "hitRate": 4.8,
-     "roi": 26.6
+     "hitRate": 4.5,
+     "roi": 24.6
     }
    }
   },
@@ -1284,90 +1284,90 @@
    }
   },
   "17": {
-   "races": 237,
-   "hits": 34,
-   "hitRate": 14.3,
-   "roi": 71.1,
+   "races": 249,
+   "hits": 35,
+   "hitRate": 14.1,
+   "roi": 68.7,
    "byRace": {
     "1": {
-     "races": 17,
+     "races": 18,
      "hits": 1,
-     "hitRate": 5.9,
-     "roi": 26.9
+     "hitRate": 5.6,
+     "roi": 25.9
     },
     "2": {
-     "races": 16,
+     "races": 17,
      "hits": 3,
-     "hitRate": 18.8,
-     "roi": 65.7
+     "hitRate": 17.6,
+     "roi": 60.0
     },
     "3": {
-     "races": 22,
-     "hits": 6,
-     "hitRate": 27.3,
-     "roi": 161.2
+     "races": 23,
+     "hits": 7,
+     "hitRate": 30.4,
+     "roi": 170.0
     },
     "4": {
-     "races": 21,
+     "races": 22,
      "hits": 1,
-     "hitRate": 4.8,
-     "roi": 7.4
+     "hitRate": 4.5,
+     "roi": 6.9
     },
     "5": {
-     "races": 21,
-     "hits": 5,
-     "hitRate": 23.8,
-     "roi": 66.1
-    },
-    "6": {
-     "races": 21,
-     "hits": 3,
-     "hitRate": 14.3,
-     "roi": 34.5
-    },
-    "7": {
-     "races": 21,
-     "hits": 3,
-     "hitRate": 14.3,
-     "roi": 71.0
-    },
-    "8": {
-     "races": 20,
-     "hits": 4,
-     "hitRate": 20.0,
-     "roi": 75.5
-    },
-    "9": {
      "races": 22,
      "hits": 5,
      "hitRate": 22.7,
-     "roi": 152.5
+     "roi": 65.1
+    },
+    "6": {
+     "races": 22,
+     "hits": 3,
+     "hitRate": 13.6,
+     "roi": 33.3
+    },
+    "7": {
+     "races": 22,
+     "hits": 3,
+     "hitRate": 13.6,
+     "roi": 63.1
+    },
+    "8": {
+     "races": 21,
+     "hits": 4,
+     "hitRate": 19.0,
+     "roi": 74.3
+    },
+    "9": {
+     "races": 23,
+     "hits": 5,
+     "hitRate": 21.7,
+     "roi": 140.6
     },
     "10": {
-     "races": 20,
+     "races": 21,
      "hits": 2,
-     "hitRate": 10.0,
-     "roi": 62.5
+     "hitRate": 9.5,
+     "roi": 56.0
     },
     "11": {
-     "races": 19,
+     "races": 20,
      "hits": 0,
      "hitRate": 0.0,
      "roi": 0.0
     },
     "12": {
-     "races": 17,
+     "races": 18,
      "hits": 1,
-     "hitRate": 5.9,
-     "roi": 18.9
+     "hitRate": 5.6,
+     "roi": 17.7
     }
    }
   },
   "18": {
-   "races": 330,
-   "hits": 64,
-   "hitRate": 19.4,
-   "roi": 105.1,
+   "races": 341,
+   "hits": 65,
+   "hitRate": 19.1,
+   "roi": 104.0,
    "byRace": {
     "1": {
      "races": 23,
@@ -1376,227 +1376,227 @@
      "roi": 72.6
     },
     "2": {
-     "races": 28,
+     "races": 29,
      "hits": 5,
-     "hitRate": 17.9,
-     "roi": 78.2
+     "hitRate": 17.2,
+     "roi": 75.4
+    },
+    "3": {
+     "races": 29,
+     "hits": 4,
+     "hitRate": 13.8,
+     "roi": 49.6
+    },
+    "4": {
+     "races": 25,
+     "hits": 2,
+     "hitRate": 8.0,
+     "roi": 31.4
+    },
+    "5": {
+     "races": 29,
+     "hits": 5,
+     "hitRate": 17.2,
+     "roi": 73.0
+    },
+    "6": {
+     "races": 30,
+     "hits": 5,
+     "hitRate": 16.7,
+     "roi": 66.7
+    },
+    "7": {
+     "races": 30,
+     "hits": 7,
+     "hitRate": 23.3,
+     "roi": 130.3
+    },
+    "8": {
+     "races": 30,
+     "hits": 5,
+     "hitRate": 16.7,
+     "roi": 85.6
+    },
+    "9": {
+     "races": 29,
+     "hits": 7,
+     "hitRate": 24.1,
+     "roi": 98.2
+    },
+    "10": {
+     "races": 30,
+     "hits": 9,
+     "hitRate": 30.0,
+     "roi": 130.6
+    },
+    "11": {
+     "races": 30,
+     "hits": 9,
+     "hitRate": 30.0,
+     "roi": 233.0
+    },
+    "12": {
+     "races": 27,
+     "hits": 4,
+     "hitRate": 14.8,
+     "roi": 103.7
+    }
+   }
+  },
+  "19": {
+   "races": 296,
+   "hits": 53,
+   "hitRate": 17.9,
+   "roi": 90.7,
+   "byRace": {
+    "1": {
+     "races": 26,
+     "hits": 4,
+     "hitRate": 15.4,
+     "roi": 61.0
+    },
+    "2": {
+     "races": 27,
+     "hits": 7,
+     "hitRate": 25.9,
+     "roi": 113.3
     },
     "3": {
      "races": 28,
      "hits": 4,
      "hitRate": 14.3,
-     "roi": 50.6
+     "roi": 61.3
     },
     "4": {
-     "races": 24,
-     "hits": 2,
-     "hitRate": 8.3,
-     "roi": 32.2
-    },
-    "5": {
-     "races": 28,
-     "hits": 5,
-     "hitRate": 17.9,
-     "roi": 74.8
-    },
-    "6": {
-     "races": 29,
-     "hits": 5,
-     "hitRate": 17.2,
-     "roi": 68.1
-    },
-    "7": {
-     "races": 29,
-     "hits": 6,
-     "hitRate": 20.7,
-     "roi": 117.0
-    },
-    "8": {
-     "races": 29,
-     "hits": 5,
-     "hitRate": 17.2,
-     "roi": 90.3
-    },
-    "9": {
-     "races": 28,
-     "hits": 7,
-     "hitRate": 25.0,
-     "roi": 104.4
-    },
-    "10": {
-     "races": 29,
-     "hits": 9,
-     "hitRate": 31.0,
-     "roi": 132.2
-    },
-    "11": {
-     "races": 29,
-     "hits": 9,
-     "hitRate": 31.0,
-     "roi": 237.9
-    },
-    "12": {
      "races": 26,
      "hits": 4,
      "hitRate": 15.4,
-     "roi": 105.5
-    }
-   }
-  },
-  "19": {
-   "races": 284,
-   "hits": 49,
-   "hitRate": 17.3,
-   "roi": 89.3,
-   "byRace": {
-    "1": {
-     "races": 25,
-     "hits": 4,
-     "hitRate": 16.0,
-     "roi": 66.8
-    },
-    "2": {
-     "races": 26,
-     "hits": 6,
-     "hitRate": 23.1,
-     "roi": 109.2
-    },
-    "3": {
-     "races": 27,
-     "hits": 4,
-     "hitRate": 14.8,
-     "roi": 65.1
-    },
-    "4": {
-     "races": 25,
-     "hits": 4,
-     "hitRate": 16.0,
-     "roi": 67.5
+     "roi": 64.4
     },
     "5": {
-     "races": 21,
+     "races": 22,
      "hits": 5,
-     "hitRate": 23.8,
-     "roi": 108.1
+     "hitRate": 22.7,
+     "roi": 100.9
     },
     "6": {
-     "races": 25,
-     "hits": 1,
-     "hitRate": 4.0,
-     "roi": 37.5
+     "races": 26,
+     "hits": 2,
+     "hitRate": 7.7,
+     "roi": 61.8
     },
     "7": {
-     "races": 23,
-     "hits": 7,
-     "hitRate": 30.4,
-     "roi": 160.5
+     "races": 24,
+     "hits": 8,
+     "hitRate": 33.3,
+     "roi": 163.9
     },
     "8": {
-     "races": 21,
+     "races": 22,
      "hits": 4,
-     "hitRate": 19.0,
-     "roi": 173.2
+     "hitRate": 18.2,
+     "roi": 169.6
     },
     "9": {
-     "races": 21,
+     "races": 22,
      "hits": 4,
-     "hitRate": 19.0,
-     "roi": 91.8
+     "hitRate": 18.2,
+     "roi": 90.0
     },
     "10": {
-     "races": 25,
+     "races": 26,
      "hits": 5,
-     "hitRate": 20.0,
-     "roi": 74.6
+     "hitRate": 19.2,
+     "roi": 72.0
     },
     "11": {
-     "races": 24,
-     "hits": 1,
-     "hitRate": 4.2,
-     "roi": 62.0
+     "races": 25,
+     "hits": 2,
+     "hitRate": 8.0,
+     "roi": 78.3
     },
     "12": {
-     "races": 21,
+     "races": 22,
      "hits": 4,
-     "hitRate": 19.0,
-     "roi": 90.5
+     "hitRate": 18.2,
+     "roi": 86.3
     }
    }
   },
   "20": {
-   "races": 208,
-   "hits": 34,
-   "hitRate": 16.3,
-   "roi": 58.9,
+   "races": 220,
+   "hits": 38,
+   "hitRate": 17.3,
+   "roi": 63.0,
    "byRace": {
     "1": {
-     "races": 19,
+     "races": 20,
      "hits": 1,
-     "hitRate": 5.3,
-     "roi": 8.4
+     "hitRate": 5.0,
+     "roi": 8.0
     },
     "2": {
-     "races": 21,
+     "races": 22,
      "hits": 2,
-     "hitRate": 9.5,
-     "roi": 23.6
+     "hitRate": 9.1,
+     "roi": 22.8
     },
     "3": {
-     "races": 19,
-     "hits": 5,
-     "hitRate": 26.3,
-     "roi": 151.2
+     "races": 20,
+     "hits": 6,
+     "hitRate": 30.0,
+     "roi": 169.1
     },
     "4": {
-     "races": 20,
+     "races": 21,
      "hits": 3,
-     "hitRate": 15.0,
-     "roi": 74.6
+     "hitRate": 14.3,
+     "roi": 71.0
     },
     "5": {
-     "races": 17,
+     "races": 18,
      "hits": 2,
-     "hitRate": 11.8,
-     "roi": 19.8
+     "hitRate": 11.1,
+     "roi": 18.0
     },
     "6": {
-     "races": 17,
-     "hits": 1,
-     "hitRate": 5.9,
-     "roi": 11.5
+     "races": 18,
+     "hits": 2,
+     "hitRate": 11.1,
+     "roi": 22.2
     },
     "7": {
-     "races": 18,
+     "races": 19,
      "hits": 8,
-     "hitRate": 44.4,
-     "roi": 124.9
+     "hitRate": 42.1,
+     "roi": 118.5
     },
     "8": {
-     "races": 12,
+     "races": 13,
      "hits": 2,
-     "hitRate": 16.7,
-     "roi": 52.2
+     "hitRate": 15.4,
+     "roi": 50.0
     },
     "9": {
-     "races": 15,
-     "hits": 2,
-     "hitRate": 13.3,
-     "roi": 29.8
+     "races": 16,
+     "hits": 3,
+     "hitRate": 18.8,
+     "roi": 55.7
     },
     "10": {
-     "races": 19,
-     "hits": 4,
-     "hitRate": 21.1,
-     "roi": 129.7
+     "races": 20,
+     "hits": 5,
+     "hitRate": 25.0,
+     "roi": 141.3
     },
     "11": {
-     "races": 17,
+     "races": 18,
      "hits": 4,
-     "hitRate": 23.5,
-     "roi": 104.2
+     "hitRate": 22.2,
+     "roi": 98.3
     },
     "12": {
-     "races": 14,
+     "races": 15,
      "hits": 0,
      "hitRate": 0.0,
      "roi": 0.0
@@ -1604,10 +1604,10 @@
    }
   },
   "21": {
-   "races": 233,
-   "hits": 27,
+   "races": 242,
+   "hits": 28,
    "hitRate": 11.6,
-   "roi": 63.4,
+   "roi": 60.9,
    "byRace": {
     "1": {
      "races": 16,
@@ -1622,28 +1622,28 @@
      "roi": 106.4
     },
     "3": {
-     "races": 18,
-     "hits": 0,
-     "hitRate": 0.0,
-     "roi": 0.0
+     "races": 19,
+     "hits": 1,
+     "hitRate": 5.3,
+     "roi": 17.9
     },
     "4": {
-     "races": 21,
+     "races": 22,
      "hits": 3,
-     "hitRate": 14.3,
-     "roi": 65.0
+     "hitRate": 13.6,
+     "roi": 63.0
     },
     "5": {
-     "races": 18,
+     "races": 19,
      "hits": 4,
-     "hitRate": 22.2,
-     "roi": 86.7
+     "hitRate": 21.1,
+     "roi": 73.3
     },
     "6": {
-     "races": 24,
+     "races": 25,
      "hits": 1,
-     "hitRate": 4.2,
-     "roi": 28.6
+     "hitRate": 4.0,
+     "roi": 27.5
     },
     "7": {
      "races": 19,
@@ -1652,34 +1652,34 @@
      "roi": 108.5
     },
     "8": {
-     "races": 24,
+     "races": 25,
      "hits": 2,
-     "hitRate": 8.3,
-     "roi": 23.1
+     "hitRate": 8.0,
+     "roi": 21.7
     },
     "9": {
-     "races": 20,
+     "races": 21,
      "hits": 6,
-     "hitRate": 30.0,
-     "roi": 184.8
+     "hitRate": 28.6,
+     "roi": 168.0
     },
     "10": {
-     "races": 19,
+     "races": 20,
      "hits": 1,
-     "hitRate": 5.3,
-     "roi": 12.9
+     "hitRate": 5.0,
+     "roi": 11.6
     },
     "11": {
-     "races": 17,
+     "races": 18,
      "hits": 0,
      "hitRate": 0.0,
      "roi": 0.0
     },
     "12": {
-     "races": 18,
+     "races": 19,
      "hits": 3,
-     "hitRate": 16.7,
-     "roi": 74.6
+     "hitRate": 15.8,
+     "roi": 72.5
     }
    }
   },
@@ -1844,34 +1844,34 @@
    }
   },
   "24": {
-   "races": 350,
-   "hits": 55,
-   "hitRate": 15.7,
-   "roi": 69.8,
+   "races": 360,
+   "hits": 56,
+   "hitRate": 15.6,
+   "roi": 69.0,
    "byRace": {
     "1": {
-     "races": 33,
+     "races": 34,
      "hits": 6,
-     "hitRate": 18.2,
-     "roi": 101.6
+     "hitRate": 17.6,
+     "roi": 100.3
     },
     "2": {
-     "races": 31,
+     "races": 32,
      "hits": 5,
-     "hitRate": 16.1,
-     "roi": 54.7
+     "hitRate": 15.6,
+     "roi": 54.2
     },
     "3": {
-     "races": 33,
+     "races": 34,
      "hits": 4,
-     "hitRate": 12.1,
-     "roi": 32.1
+     "hitRate": 11.8,
+     "roi": 31.8
     },
     "4": {
-     "races": 31,
-     "hits": 5,
-     "hitRate": 16.1,
-     "roi": 78.2
+     "races": 32,
+     "hits": 6,
+     "hitRate": 18.8,
+     "roi": 83.7
     },
     "5": {
      "races": 32,
@@ -1880,10 +1880,10 @@
      "roi": 41.3
     },
     "6": {
-     "races": 32,
+     "races": 33,
      "hits": 5,
-     "hitRate": 15.6,
-     "roi": 41.4
+     "hitRate": 15.2,
+     "roi": 39.9
     },
     "7": {
      "races": 27,
@@ -1892,34 +1892,34 @@
      "roi": 57.8
     },
     "8": {
-     "races": 29,
+     "races": 30,
      "hits": 7,
-     "hitRate": 24.1,
-     "roi": 133.4
+     "hitRate": 23.3,
+     "roi": 129.0
     },
     "9": {
-     "races": 26,
+     "races": 27,
      "hits": 4,
-     "hitRate": 15.4,
-     "roi": 56.3
+     "hitRate": 14.8,
+     "roi": 54.4
     },
     "10": {
-     "races": 26,
+     "races": 27,
      "hits": 4,
-     "hitRate": 15.4,
-     "roi": 104.3
+     "hitRate": 14.8,
+     "roi": 100.0
     },
     "11": {
-     "races": 21,
+     "races": 22,
      "hits": 4,
-     "hitRate": 19.0,
-     "roi": 113.8
+     "hitRate": 18.2,
+     "roi": 110.3
     },
     "12": {
-     "races": 29,
+     "races": 30,
      "hits": 3,
-     "hitRate": 10.3,
-     "roi": 72.6
+     "hitRate": 10.0,
+     "roi": 70.0
     }
    }
   }
