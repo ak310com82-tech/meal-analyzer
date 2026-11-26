@@ -15,9 +15,9 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 9400,
    "reason": "本命82%、鉄板級、買い目全体のEV平均1.4と妙味あり、展示の足色も本命が上位。"
   },
   {
@@ -32,9 +32,9 @@
    "unit": 300,
    "stake": 300,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 9100,
    "reason": "本命74%、鉄板級、買い目全体のEV平均1.1。"
   },
   {
@@ -364,7 +364,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "",
+ "comment": "2レースを精算し、的中0本。現在の残高は9,100円。",
  "notes": [],
- "updated": "2026-11-26T08:54:14+09:00"
+ "updated": "2026-11-26T09:14:17+09:00"
 }
