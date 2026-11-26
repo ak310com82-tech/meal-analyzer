@@ -309,10 +309,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "本命77%、鉄板級。"
   },
   {
    "venue": 20,
@@ -425,7 +425,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "12レースを精算し、的中1本。最大の的中は三国5Rの払戻1,960円。現在の残高は6,210円。",
+ "comment": "12レースを精算し、的中1本。最大の的中は三国5Rの払戻1,960円。現在の残高は5,610円。",
  "notes": [],
- "updated": "2026-11-26T17:34:13+09:00"
+ "updated": "2026-11-26T17:44:16+09:00"
 }
