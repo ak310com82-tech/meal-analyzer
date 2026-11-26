@@ -354,17 +354,16 @@
    "race": 9,
    "deadline": "2026-11-26T18:54:00+09:00",
    "picks": [
-    "1-4-2",
     "1-4-3"
    ],
-   "points": 2,
+   "points": 1,
    "unit": 300,
-   "stake": 600,
+   "stake": 300,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命80%、鉄板級。買うつもりで予定。"
+   "reason": "本命80%、鉄板級、買い目全体のEV平均1.2。"
   },
   {
    "venue": 12,
@@ -423,7 +422,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "14レースを精算し、的中2本。最大の的中は三国5Rの払戻1,960円。現在の残高は6,750円。",
+ "comment": "14レースを精算し、的中2本。最大の的中は三国5Rの払戻1,960円。現在の残高は6,450円。",
  "notes": [],
- "updated": "2026-11-26T18:34:16+09:00"
+ "updated": "2026-11-26T18:44:14+09:00"
 }
