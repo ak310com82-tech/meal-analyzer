@@ -186,9 +186,9 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 7710,
    "reason": "本命76%、鉄板級、本命のモーター2連対43%と素性も良い。"
   },
   {
@@ -427,7 +427,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "8レースを精算し、的中1本。最大の的中は三国5Rの払戻1,960円。現在の残高は7,410円。",
+ "comment": "9レースを精算し、的中1本。最大の的中は三国5Rの払戻1,960円。現在の残高は7,410円。",
  "notes": [],
- "updated": "2026-11-26T14:44:15+09:00"
+ "updated": "2026-11-26T14:54:14+09:00"
 }
