@@ -201,9 +201,9 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 6600,
    "reason": "本命79%、鉄板級、買い目全体のEV平均2.1と妙味あり、展示の足色も本命が上位、本命のモーター2連対48%と素性も良い。"
   },
   {
@@ -425,7 +425,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "7レースを精算し、的中0本。現在の残高は6,600円。",
+ "comment": "8レースを精算し、的中0本。現在の残高は6,600円。",
  "notes": [],
- "updated": "2026-11-27T13:14:16+09:00"
+ "updated": "2026-11-27T13:24:25+09:00"
 }
