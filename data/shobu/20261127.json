@@ -237,9 +237,9 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 6000,
    "reason": "本命78%、鉄板級、買い目全体のEV平均1.4と妙味あり、展示の足色も本命が上位、本命のモーター2連対42%と素性も良い。"
   },
   {
@@ -255,10 +255,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "本命77%、鉄板級、買い目全体のEV平均1.6と妙味あり、本命のモーター2連対47%と素性も良い。"
   },
   {
    "venue": 2,
@@ -425,7 +425,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "8レースを精算し、的中0本。現在の残高は6,000円。",
+ "comment": "9レースを精算し、的中0本。現在の残高は5,400円。",
  "notes": [],
- "updated": "2026-11-27T14:04:15+09:00"
+ "updated": "2026-11-27T14:44:22+09:00"
 }
