@@ -26,17 +26,16 @@
    "race": 1,
    "deadline": "2026-11-28T08:43:00+09:00",
    "picks": [
-    "1-3-2",
-    "1-2-3"
+    "1-3-2"
    ],
-   "points": 2,
+   "points": 1,
    "unit": 300,
-   "stake": 600,
+   "stake": 300,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+   "reason": "本命81%、鉄板級、買い目全体のEV平均0.9。"
   },
   {
    "venue": 18,
@@ -367,5 +366,5 @@
  "pl": null,
  "comment": "",
  "notes": [],
- "updated": "2026-11-28T08:24:15+09:00"
+ "updated": "2026-11-28T08:34:15+09:00"
 }
