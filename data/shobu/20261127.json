@@ -217,12 +217,12 @@
    ],
    "points": 2,
    "unit": 300,
-   "stake": 600,
+   "stake": 0,
    "mode": "通常",
-   "status": "planned",
-   "payout": null,
+   "status": "passed",
+   "payout": 0,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命78%、鉄板級。買うつもりで予定。"
+   "reason": "締切前のオッズで買い目がEV割れし、買える目がなくなったため見送り。"
   },
   {
    "venue": 23,
@@ -427,5 +427,5 @@
  "pl": null,
  "comment": "7レースを精算し、的中0本。現在の残高は6,600円。",
  "notes": [],
- "updated": "2026-11-27T12:44:14+09:00"
+ "updated": "2026-11-27T13:14:16+09:00"
 }
