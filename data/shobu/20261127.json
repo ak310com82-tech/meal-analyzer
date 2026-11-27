@@ -359,12 +359,12 @@
    ],
    "points": 2,
    "unit": 300,
-   "stake": 600,
+   "stake": 0,
    "mode": "通常",
-   "status": "planned",
-   "payout": null,
+   "status": "passed",
+   "payout": 0,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命82%、鉄板級。買うつもりで予定。"
+   "reason": "締切前のオッズで買い目がEV割れし、買える目がなくなったため見送り。"
   },
   {
    "venue": 20,
@@ -425,5 +425,5 @@
  "pl": null,
  "comment": "13レースを精算し、的中2本。最大の的中は江戸川12Rの払戻6,780円。現在の残高は12,480円。",
  "notes": [],
- "updated": "2026-11-27T17:44:15+09:00"
+ "updated": "2026-11-27T18:04:15+09:00"
 }
