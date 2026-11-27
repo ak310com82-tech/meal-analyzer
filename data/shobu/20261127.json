@@ -273,9 +273,9 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "hit",
+   "payout": 2700,
+   "balanceAfter": 7500,
    "reason": "本命80%、鉄板級、買い目全体のEV平均1.8と妙味あり。"
   },
   {
@@ -308,10 +308,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "本命77%、鉄板級、買い目全体のEV平均2.5と妙味あり、本命のモーター2連対43%と素性も良い。"
   },
   {
    "venue": 1,
@@ -424,7 +424,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "10レースを精算し、的中0本。現在の残高は4,500円。",
+ "comment": "11レースを精算し、的中1本。最大の的中は戸田11Rの払戻2,700円。現在の残高は6,600円。",
  "notes": [],
- "updated": "2026-11-27T15:34:14+09:00"
+ "updated": "2026-11-27T15:54:21+09:00"
 }
