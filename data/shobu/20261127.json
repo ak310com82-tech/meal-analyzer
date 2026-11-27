@@ -26,17 +26,16 @@
    "race": 2,
    "deadline": "2026-11-27T09:09:00+09:00",
    "picks": [
-    "1-2-3",
-    "1-3-2"
+    "1-2-4"
    ],
-   "points": 2,
+   "points": 1,
    "unit": 300,
-   "stake": 600,
+   "stake": 300,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+   "reason": "本命81%、鉄板級、買い目全体のEV平均1.3と妙味あり、本命のモーター2連対40%と素性も良い。"
   },
   {
    "venue": 18,
@@ -44,17 +43,16 @@
    "race": 2,
    "deadline": "2026-11-27T09:17:00+09:00",
    "picks": [
-    "1-2-3",
-    "1-3-2"
+    "1-2-3"
    ],
-   "points": 2,
+   "points": 1,
    "unit": 300,
-   "stake": 600,
+   "stake": 300,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "本命77%、鉄板級、買い目全体のEV平均1.1。"
   },
   {
    "venue": 18,
@@ -367,5 +365,5 @@
  "pl": null,
  "comment": "",
  "notes": [],
- "updated": "2026-11-27T08:34:13+09:00"
+ "updated": "2026-11-27T09:04:15+09:00"
 }
