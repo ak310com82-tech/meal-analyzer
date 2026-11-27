@@ -1,0 +1,371 @@
+{
+ "date": "2026-11-28",
+ "start": 10000,
+ "bets": [
+  {
+   "venue": 14,
+   "venueName": "鳴門",
+   "race": 1,
+   "deadline": "2026-11-28T08:35:00+09:00",
+   "picks": [
+    "1-4-2",
+    "1-2-4"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 23,
+   "venueName": "唐津",
+   "race": 1,
+   "deadline": "2026-11-28T08:43:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-2-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 18,
+   "venueName": "徳山",
+   "race": 4,
+   "deadline": "2026-11-28T10:09:00+09:00",
+   "picks": [
+    "1-2-4",
+    "1-4-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命80%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 17,
+   "venueName": "宮島",
+   "race": 1,
+   "deadline": "2026-11-28T10:19:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-3-5"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命82%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 8,
+   "venueName": "常滑",
+   "race": 3,
+   "deadline": "2026-11-28T11:20:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-2-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命76%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 17,
+   "venueName": "宮島",
+   "race": 7,
+   "deadline": "2026-11-28T12:52:00+09:00",
+   "picks": [
+    "1-2-4",
+    "1-4-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命82%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 2,
+   "venueName": "戸田",
+   "race": 7,
+   "deadline": "2026-11-28T13:27:00+09:00",
+   "picks": [
+    "1-2-4",
+    "1-4-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命87%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 6,
+   "venueName": "浜名湖",
+   "race": 8,
+   "deadline": "2026-11-28T13:48:00+09:00",
+   "picks": [
+    "1-3-4",
+    "1-3-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 18,
+   "venueName": "徳山",
+   "race": 11,
+   "deadline": "2026-11-28T13:50:00+09:00",
+   "picks": [
+    "1-2-4",
+    "1-4-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命76%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 18,
+   "venueName": "徳山",
+   "race": 12,
+   "deadline": "2026-11-28T14:28:00+09:00",
+   "picks": [
+    "1-2-3",
+    "1-2-4"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 17,
+   "venueName": "宮島",
+   "race": 11,
+   "deadline": "2026-11-28T14:45:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-2-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 8,
+   "venueName": "常滑",
+   "race": 10,
+   "deadline": "2026-11-28T14:53:00+09:00",
+   "picks": [
+    "1-2-3",
+    "1-2-4"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命78%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 3,
+   "venueName": "江戸川",
+   "race": 10,
+   "deadline": "2026-11-28T14:59:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-2-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命79%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 13,
+   "venueName": "尼崎",
+   "race": 10,
+   "deadline": "2026-11-28T15:07:00+09:00",
+   "picks": [
+    "1-2-5",
+    "1-5-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命76%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 13,
+   "venueName": "尼崎",
+   "race": 12,
+   "deadline": "2026-11-28T16:05:00+09:00",
+   "picks": [
+    "1-2-3",
+    "1-3-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命83%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 20,
+   "venueName": "若松",
+   "race": 6,
+   "deadline": "2026-11-28T17:27:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-3-4"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命81%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 20,
+   "venueName": "若松",
+   "race": 7,
+   "deadline": "2026-11-28T17:52:00+09:00",
+   "picks": [
+    "1-3-4",
+    "1-4-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命78%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 15,
+   "venueName": "丸亀",
+   "race": 10,
+   "deadline": "2026-11-28T19:42:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-3-4"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 24,
+   "venueName": "大村",
+   "race": 11,
+   "deadline": "2026-11-28T20:17:00+09:00",
+   "picks": [
+    "1-2-4",
+    "1-2-3"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命83%、鉄板級。買うつもりで予定。"
+  },
+  {
+   "venue": 24,
+   "venueName": "大村",
+   "race": 12,
+   "deadline": "2026-11-28T20:45:00+09:00",
+   "picks": [
+    "1-2-3",
+    "1-3-2"
+   ],
+   "points": 2,
+   "unit": 300,
+   "stake": 600,
+   "mode": "通常",
+   "status": "planned",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "朝の見立て：本命76%、鉄板級。買うつもりで予定。"
+  }
+ ],
+ "finalBalance": null,
+ "pl": null,
+ "comment": "本日は買うつもりのレースがなく、勝負なし。",
+ "notes": [],
+ "updated": "2026-11-28T07:34:16+09:00"
+}
