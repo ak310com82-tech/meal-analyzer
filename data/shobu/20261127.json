@@ -378,9 +378,9 @@
    "unit": 300,
    "stake": 300,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 12180,
    "reason": "本命78%、鉄板級、買い目全体のEV平均1.5と妙味あり。"
   },
   {
@@ -422,7 +422,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "15レースを精算し、的中2本。最大の的中は江戸川12Rの払戻6,780円。現在の残高は11,580円。",
+ "comment": "16レースを精算し、的中2本。最大の的中は江戸川12Rの払戻6,780円。現在の残高は11,580円。",
  "notes": [],
- "updated": "2026-11-27T19:44:14+09:00"
+ "updated": "2026-11-27T19:54:15+09:00"
 }
