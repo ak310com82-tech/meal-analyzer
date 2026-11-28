@@ -320,12 +320,12 @@
    ],
    "points": 2,
    "unit": 300,
-   "stake": 600,
+   "stake": 0,
    "mode": "通常",
-   "status": "planned",
-   "payout": null,
+   "status": "passed",
+   "payout": 0,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命83%、鉄板級。買うつもりで予定。"
+   "reason": "風9mの強風のため見送り。"
   },
   {
    "venue": 20,
@@ -425,5 +425,5 @@
   "鳴門は風8mと強風のため、本日はこの場を見送る。",
   "尼崎は風9mと強風のため、本日はこの場を見送る。"
  ],
- "updated": "2026-11-28T15:34:14+09:00"
+ "updated": "2026-11-28T15:54:16+09:00"
 }
