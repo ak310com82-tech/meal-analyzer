@@ -15,9 +15,17 @@
    "stakeTotal": 7900,
    "payoutTotal": 9480,
    "betCount": 17
+  },
+  {
+   "date": "2026-11-28",
+   "pl": -3210,
+   "finalBalance": 6790,
+   "stakeTotal": 5100,
+   "payoutTotal": 1890,
+   "betCount": 12
   }
  ],
- "totalPl": 1680,
- "dayCount": 2,
+ "totalPl": -1530,
+ "dayCount": 3,
  "plusDays": 2
 }
