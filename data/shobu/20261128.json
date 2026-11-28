@@ -231,12 +231,12 @@
    ],
    "points": 2,
    "unit": 300,
-   "stake": 600,
+   "stake": 0,
    "mode": "通常",
-   "status": "planned",
-   "payout": null,
+   "status": "passed",
+   "payout": 0,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "締切に間に合わず見送り。"
   },
   {
    "venue": 17,
@@ -245,16 +245,16 @@
    "deadline": "2026-11-28T14:45:00+09:00",
    "picks": [
     "1-3-2",
-    "1-2-3"
+    "1-3-4"
    ],
    "points": 2,
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命77%、鉄板級。買うつもりで予定。"
+   "reason": "本命77%、鉄板級、買い目全体のEV平均1.8と妙味あり、本命のモーター2連対47%と素性も良い。"
   },
   {
    "venue": 8,
@@ -421,9 +421,9 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "8レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は8,890円。",
+ "comment": "8レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は8,290円。",
  "notes": [
   "鳴門は風8mと強風のため、本日はこの場を見送る。"
  ],
- "updated": "2026-11-28T14:24:18+09:00"
+ "updated": "2026-11-28T14:34:14+09:00"
 }
