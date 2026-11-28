@@ -61,17 +61,56 @@
    "race": 1,
    "deadline": "2026-11-28T10:19:00+09:00",
    "picks": [
-    "1-3-2",
-    "1-3-5"
+    "1-3-2"
    ],
-   "points": 2,
+   "points": 1,
    "unit": 300,
-   "stake": 600,
+   "stake": 300,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命82%、鉄板級。買うつもりで予定。"
+   "reason": "本命85%、鉄板級、買い目全体のEV平均1.3、本命のモーター2連対41%と素性も良い。"
+  },
+  {
+   "venue": 14,
+   "venueName": "鳴門",
+   "race": 5,
+   "deadline": "2026-11-28T10:21:00+09:00",
+   "picks": [
+    "1-3-4",
+    "1-4-3",
+    "1-3-2",
+    "1-4-2"
+   ],
+   "points": 4,
+   "unit": 100,
+   "stake": 400,
+   "mode": "通常",
+   "status": "pending",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "本命48%と割れたレースだが、買い目全体のEV平均3.0と妙味あり、朝の予定外だが妙味で追加。"
+  },
+  {
+   "venue": 8,
+   "venueName": "常滑",
+   "race": 1,
+   "deadline": "2026-11-28T10:26:00+09:00",
+   "picks": [
+    "1-3-2",
+    "1-2-3",
+    "3-1-2",
+    "2-1-3"
+   ],
+   "points": 4,
+   "unit": 100,
+   "stake": 400,
+   "mode": "通常",
+   "status": "pending",
+   "payout": null,
+   "balanceAfter": null,
+   "reason": "本命48%と割れたレースだが、買い目全体のEV平均2.6と妙味あり、朝の予定外だが妙味で追加。"
   },
   {
    "venue": 8,
@@ -364,7 +403,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "1レースを精算し、的中0本。現在の残高は9,700円。",
+ "comment": "1レースを精算し、的中0本。現在の残高は8,600円。",
  "notes": [],
- "updated": "2026-11-28T10:04:15+09:00"
+ "updated": "2026-11-28T10:14:28+09:00"
 }
