@@ -286,10 +286,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命79%、鉄板級。買うつもりで予定。"
+   "reason": "本命79%、鉄板級、買い目全体のEV平均1.7と妙味あり、本命のモーター2連対40%と素性も良い。"
   },
   {
    "venue": 13,
@@ -304,10 +304,10 @@
    "unit": 300,
    "stake": 600,
    "mode": "通常",
-   "status": "planned",
+   "status": "pending",
    "payout": null,
    "balanceAfter": null,
-   "reason": "朝の見立て：本命76%、鉄板級。買うつもりで予定。"
+   "reason": "本命81%、鉄板級、買い目全体のEV平均1.7と妙味あり、展示の足色も本命が上位。"
   },
   {
    "venue": 13,
@@ -420,9 +420,9 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "8レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は7,990円。",
+ "comment": "8レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は6,790円。",
  "notes": [
   "鳴門は風8mと強風のため、本日はこの場を見送る。"
  ],
- "updated": "2026-11-28T14:44:15+09:00"
+ "updated": "2026-11-28T14:54:15+09:00"
 }
