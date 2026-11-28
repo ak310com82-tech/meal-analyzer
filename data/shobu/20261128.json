@@ -127,9 +127,9 @@
    "unit": 100,
    "stake": 400,
    "mode": "通常",
-   "status": "pending",
-   "payout": null,
-   "balanceAfter": null,
+   "status": "miss",
+   "payout": 0,
+   "balanceAfter": 10090,
    "reason": "本命49%と割れたレースだが、買い目全体のEV平均2.2と妙味あり、朝の予定外だが妙味で追加。"
   },
   {
@@ -423,7 +423,7 @@
  ],
  "finalBalance": null,
  "pl": null,
- "comment": "4レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は10,090円。",
+ "comment": "5レースを精算し、的中1本。最大の的中は宮島1Rの払戻1,890円。現在の残高は10,090円。",
  "notes": [],
- "updated": "2026-11-28T10:54:22+09:00"
+ "updated": "2026-11-28T11:04:18+09:00"
 }
